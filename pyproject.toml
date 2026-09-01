@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "literaryclock"
+version = "1.0.0"
+description = "青空文庫コーパスによる文学時計 (Raspberry Pi 向け全画面表示)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "LiteraryClock Contributors" }]
+keywords = ["raspberry-pi", "clock", "aozorabunko", "kiosk", "japanese"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: X11 Applications",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Desktop Environment",
+    "Natural Language :: Japanese",
+]
+# 依存パッケージなし: 標準ライブラリの http.server のみで動作する
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "playwright>=1.40",
+]
+
+[project.scripts]
+literary-clock = "literaryclock.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Ryuto-dev/LiteraryClock"
+Repository = "https://github.com/Ryuto-dev/LiteraryClock"
+
+[tool.setuptools]
+packages = ["literaryclock"]
+
+[tool.setuptools.package-data]
+literaryclock = ["web/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

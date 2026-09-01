@@ -1,0 +1,75 @@
+/* ==========================================================================
+   フォント定義
+
+   方針
+   -----
+   文学作品の引用を主役にする時計なので、書体は「明朝体 (セリフ)」を基本とする。
+   縦書きにも耐え、旧字・異体字を含む青空文庫のテキストで豆腐 (□) が出にくい
+   ものを優先する。
+
+   1. まず OS にインストールされた日本語明朝を使う (ダウンロード不要・即描画)
+        Raspberry Pi OS:  sudo apt install fonts-noto-cjk
+        → Noto Serif CJK JP が入る
+   2. より凝った書体を使いたい場合は scripts/fetch_fonts.sh で
+      web/fonts/ に woff2 を置く。存在するものだけを js/fonts.js が
+      実行時に @font-face 登録し、スタックの先頭へ差し込む。
+      (ファイルが無い場合に 404 を出さないよう、CSS 側では url() を書かない)
+
+   書体の優先順位と理由
+   --------------------
+   - Zen Old Mincho / Shippori Mincho … 古典的な骨格。青空文庫の文体に最も合う
+   - Noto Serif CJK JP … 字種が最広。異体字を含む作品でも破綻しない安全牌
+   - Hiragino Mincho / YuMincho … macOS / Windows 派生時の受け皿
+   ========================================================================== */
+
+:root {
+  /* 本文 (引用文) — 明朝体スタック */
+  --font-serif:
+    "Zen Old Mincho",
+    "Shippori Mincho",
+    "Noto Serif CJK JP",
+    "Noto Serif JP",
+    "Source Han Serif JP",
+    "Hiragino Mincho ProN",
+    "Hiragino Mincho Pro",
+    "YuMincho",
+    "Yu Mincho",
+    "IPAexMincho",
+    "IPAMincho",
+    "MS PMincho",
+    "Songti SC",
+    serif;
+
+  /* 見出し・装飾 (現状は本文と同系統) */
+  --font-display:
+    "Zen Old Mincho",
+    "Shippori Mincho",
+    var(--font-serif);
+
+  /* HUD のデジタル時刻 — 数字幅が揃う等幅書体 */
+  --font-mono:
+    "JetBrains Mono",
+    "Roboto Mono",
+    "DejaVu Sans Mono",
+    "Liberation Mono",
+    "SFMono-Regular",
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+/* --------------------------------------------------------------------------
+   日本語組版の共通設定
+
+   - palt: プロポーショナルメトリクス。「、」「。」など約物の余白のみを詰める
+   - kern: カーニング
+
+   注意: font-variant-east-asian: proportional-width (pwid) は使わない。
+   pwid は約物だけでなく仮名・漢字まで可変幅にするため、
+   明朝体の字面が不揃いに見え、行の途中に不自然な空きが生じる。
+   約物の詰めは palt だけで十分。
+   -------------------------------------------------------------------------- */
+:where(body) {
+  font-feature-settings: "palt" 1, "kern" 1;
+  font-variant-east-asian: normal;
+}

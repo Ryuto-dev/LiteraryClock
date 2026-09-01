@@ -1,0 +1,2018 @@
+[
+  {
+    "time": "00:00",
+    "excerpt": "午前十二時ちょうど",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "柱時計の音だけが家中に響いていて、午前十二時ちょうどに、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "00:10",
+    "excerpt": "午前十二時十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "眠れぬまま窓の外を見ていると、午前十二時十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "00:20",
+    "excerpt": "午前十二時二十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前十二時二十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "00:30",
+    "excerpt": "午前十二時三十分",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "柱時計の音だけが家中に響いていて、午前十二時三十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "00:40",
+    "excerpt": "午前十二時四十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "眠れぬまま窓の外を見ていると、午前十二時四十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "00:50",
+    "excerpt": "午前十二時五十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前十二時五十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "01:00",
+    "excerpt": "午前一時ちょうど",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "の静けさは、水底のようであった。",
+    "quote": "柱時計の音だけが家中に響いていて、午前一時ちょうどの静けさは、水底のようであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "01:10",
+    "excerpt": "午前一時十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "の静けさは、水底のようであった。",
+    "quote": "眠れぬまま窓の外を見ていると、午前一時十分の静けさは、水底のようであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "01:20",
+    "excerpt": "午前一時二十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "の静けさは、水底のようであった。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前一時二十分の静けさは、水底のようであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "01:30",
+    "excerpt": "午前一時三十分",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "柱時計の音だけが家中に響いていて、午前一時三十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "01:40",
+    "excerpt": "午前一時四十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "眠れぬまま窓の外を見ていると、午前一時四十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "01:50",
+    "excerpt": "午前一時五十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前一時五十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "02:00",
+    "excerpt": "午前二時ちょうど",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "柱時計の音だけが家中に響いていて、午前二時ちょうどを告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "02:10",
+    "excerpt": "午前二時十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "眠れぬまま窓の外を見ていると、午前二時十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "02:20",
+    "excerpt": "午前二時二十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前二時二十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "02:30",
+    "excerpt": "午前二時三十分",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "の静けさは、水底のようであった。",
+    "quote": "柱時計の音だけが家中に響いていて、午前二時三十分の静けさは、水底のようであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "02:40",
+    "excerpt": "午前二時四十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "の静けさは、水底のようであった。",
+    "quote": "眠れぬまま窓の外を見ていると、午前二時四十分の静けさは、水底のようであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "02:50",
+    "excerpt": "午前二時五十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "の静けさは、水底のようであった。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前二時五十分の静けさは、水底のようであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "03:00",
+    "excerpt": "午前三時ちょうど",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "柱時計の音だけが家中に響いていて、午前三時ちょうどに、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "03:10",
+    "excerpt": "午前三時十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "眠れぬまま窓の外を見ていると、午前三時十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "03:20",
+    "excerpt": "午前三時二十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "に、遠くで貨物列車が過ぎて行った。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前三時二十分に、遠くで貨物列車が過ぎて行った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "03:30",
+    "excerpt": "午前三時三十分",
+    "before": "柱時計の音だけが家中に響いていて、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "柱時計の音だけが家中に響いていて、午前三時三十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "03:40",
+    "excerpt": "午前三時四十分",
+    "before": "眠れぬまま窓の外を見ていると、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "眠れぬまま窓の外を見ていると、午前三時四十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "03:50",
+    "excerpt": "午前三時五十分",
+    "before": "灯を落とした部屋で耳を澄ますと、",
+    "after": "を告げる鐘が、雪のなかで鈍く鳴った。",
+    "quote": "灯を落とした部屋で耳を澄ますと、午前三時五十分を告げる鐘が、雪のなかで鈍く鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "04:00",
+    "excerpt": "午前四時ちょうど",
+    "before": "障子がうすあかるくなって、",
+    "after": "を待って、私は草履をはいた。",
+    "quote": "障子がうすあかるくなって、午前四時ちょうどを待って、私は草履をはいた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "04:10",
+    "excerpt": "午前四時十分",
+    "before": "鳥の声で目をさましたのは、",
+    "after": "を待って、私は草履をはいた。",
+    "quote": "鳥の声で目をさましたのは、午前四時十分を待って、私は草履をはいた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "04:20",
+    "excerpt": "午前四時二十分",
+    "before": "宿の者が起き出す気配がして、",
+    "after": "を待って、私は草履をはいた。",
+    "quote": "宿の者が起き出す気配がして、午前四時二十分を待って、私は草履をはいた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "04:30",
+    "excerpt": "午前四時三十分",
+    "before": "障子がうすあかるくなって、",
+    "after": "には、もう霧が谷を降りていた。",
+    "quote": "障子がうすあかるくなって、午前四時三十分には、もう霧が谷を降りていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "04:40",
+    "excerpt": "午前四時四十分",
+    "before": "鳥の声で目をさましたのは、",
+    "after": "には、もう霧が谷を降りていた。",
+    "quote": "鳥の声で目をさましたのは、午前四時四十分には、もう霧が谷を降りていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "04:50",
+    "excerpt": "午前四時五十分",
+    "before": "宿の者が起き出す気配がして、",
+    "after": "には、もう霧が谷を降りていた。",
+    "quote": "宿の者が起き出す気配がして、午前四時五十分には、もう霧が谷を降りていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "05:00",
+    "excerpt": "午前五時ちょうど",
+    "before": "障子がうすあかるくなって、",
+    "after": "の空は、藍から白へ移ろうところだった。",
+    "quote": "障子がうすあかるくなって、午前五時ちょうどの空は、藍から白へ移ろうところだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "05:10",
+    "excerpt": "午前五時十分",
+    "before": "鳥の声で目をさましたのは、",
+    "after": "の空は、藍から白へ移ろうところだった。",
+    "quote": "鳥の声で目をさましたのは、午前五時十分の空は、藍から白へ移ろうところだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "05:20",
+    "excerpt": "午前五時二十分",
+    "before": "宿の者が起き出す気配がして、",
+    "after": "の空は、藍から白へ移ろうところだった。",
+    "quote": "宿の者が起き出す気配がして、午前五時二十分の空は、藍から白へ移ろうところだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "05:30",
+    "excerpt": "午前五時三十分",
+    "before": "障子がうすあかるくなって、",
+    "after": "を待って、私は草履をはいた。",
+    "quote": "障子がうすあかるくなって、午前五時三十分を待って、私は草履をはいた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "05:40",
+    "excerpt": "午前五時四十分",
+    "before": "鳥の声で目をさましたのは、",
+    "after": "を待って、私は草履をはいた。",
+    "quote": "鳥の声で目をさましたのは、午前五時四十分を待って、私は草履をはいた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "05:50",
+    "excerpt": "午前五時五十分",
+    "before": "宿の者が起き出す気配がして、",
+    "after": "を待って、私は草履をはいた。",
+    "quote": "宿の者が起き出す気配がして、午前五時五十分を待って、私は草履をはいた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "06:00",
+    "excerpt": "午前六時ちょうど",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前六時ちょうどを少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "06:10",
+    "excerpt": "午前六時十分",
+    "before": "郵便が届いたのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "郵便が届いたのは、午前六時十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "06:20",
+    "excerpt": "午前六時二十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "駅の改札を抜けたときには、午前六時二十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "06:30",
+    "excerpt": "午前六時三十分",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前六時三十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "06:40",
+    "excerpt": "午前六時四十分",
+    "before": "郵便が届いたのは、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "郵便が届いたのは、午前六時四十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "06:50",
+    "excerpt": "午前六時五十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "駅の改札を抜けたときには、午前六時五十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "07:00",
+    "excerpt": "午前七時ちょうど",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前七時ちょうど発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "07:10",
+    "excerpt": "午前七時十分",
+    "before": "郵便が届いたのは、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "郵便が届いたのは、午前七時十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "07:20",
+    "excerpt": "午前七時二十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "駅の改札を抜けたときには、午前七時二十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "07:30",
+    "excerpt": "午前七時三十分",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前七時三十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "07:40",
+    "excerpt": "午前七時四十分",
+    "before": "郵便が届いたのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "郵便が届いたのは、午前七時四十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "07:50",
+    "excerpt": "午前七時五十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "駅の改札を抜けたときには、午前七時五十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "08:00",
+    "excerpt": "午前八時ちょうど",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前八時ちょうどの日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "08:10",
+    "excerpt": "午前八時十分",
+    "before": "郵便が届いたのは、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "郵便が届いたのは、午前八時十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "08:20",
+    "excerpt": "午前八時二十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "駅の改札を抜けたときには、午前八時二十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "08:30",
+    "excerpt": "午前八時三十分",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前八時三十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "08:40",
+    "excerpt": "午前八時四十分",
+    "before": "郵便が届いたのは、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "郵便が届いたのは、午前八時四十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "08:50",
+    "excerpt": "午前八時五十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "駅の改札を抜けたときには、午前八時五十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "09:00",
+    "excerpt": "午前九時ちょうど",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前九時ちょうどを少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "09:10",
+    "excerpt": "午前九時十分",
+    "before": "郵便が届いたのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "郵便が届いたのは、午前九時十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "09:20",
+    "excerpt": "午前九時二十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "駅の改札を抜けたときには、午前九時二十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "09:30",
+    "excerpt": "午前九時三十分",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前九時三十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "09:40",
+    "excerpt": "午前九時四十分",
+    "before": "郵便が届いたのは、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "郵便が届いたのは、午前九時四十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "09:50",
+    "excerpt": "午前九時五十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "の日ざしが、机の端まで届いていた。",
+    "quote": "駅の改札を抜けたときには、午前九時五十分の日ざしが、机の端まで届いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "10:00",
+    "excerpt": "午前十時ちょうど",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前十時ちょうど発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "10:10",
+    "excerpt": "午前十時十分",
+    "before": "郵便が届いたのは、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "郵便が届いたのは、午前十時十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "10:20",
+    "excerpt": "午前十時二十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "発の汽車に間に合うはずだった。",
+    "quote": "駅の改札を抜けたときには、午前十時二十分発の汽車に間に合うはずだった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "10:30",
+    "excerpt": "午前十時三十分",
+    "before": "約束を思い出して急に立ち上がったのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "約束を思い出して急に立ち上がったのは、午前十時三十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "10:40",
+    "excerpt": "午前十時四十分",
+    "before": "郵便が届いたのは、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "郵便が届いたのは、午前十時四十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "10:50",
+    "excerpt": "午前十時五十分",
+    "before": "駅の改札を抜けたときには、",
+    "after": "を少し過ぎたころであった。",
+    "quote": "駅の改札を抜けたときには、午前十時五十分を少し過ぎたころであった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "11:00",
+    "excerpt": "午前十一時ちょうど",
+    "before": "工場の笛が鳴り渡って、",
+    "after": "になったのにも気づかなかった。",
+    "quote": "工場の笛が鳴り渡って、午前十一時ちょうどになったのにも気づかなかった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "11:10",
+    "excerpt": "午前十一時十分",
+    "before": "縁側で新聞をひろげたまま、",
+    "after": "になったのにも気づかなかった。",
+    "quote": "縁側で新聞をひろげたまま、午前十一時十分になったのにも気づかなかった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "11:20",
+    "excerpt": "午前十一時二十分",
+    "before": "客の絶えた店先で、",
+    "after": "になったのにも気づかなかった。",
+    "quote": "客の絶えた店先で、午前十一時二十分になったのにも気づかなかった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "11:30",
+    "excerpt": "午前十一時三十分",
+    "before": "工場の笛が鳴り渡って、",
+    "after": "の暑さは、石畳を白く焼いていた。",
+    "quote": "工場の笛が鳴り渡って、午前十一時三十分の暑さは、石畳を白く焼いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "11:40",
+    "excerpt": "午前十一時四十分",
+    "before": "縁側で新聞をひろげたまま、",
+    "after": "の暑さは、石畳を白く焼いていた。",
+    "quote": "縁側で新聞をひろげたまま、午前十一時四十分の暑さは、石畳を白く焼いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "11:50",
+    "excerpt": "午前十一時五十分",
+    "before": "客の絶えた店先で、",
+    "after": "の暑さは、石畳を白く焼いていた。",
+    "quote": "客の絶えた店先で、午前十一時五十分の暑さは、石畳を白く焼いていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "12:00",
+    "excerpt": "午後十二時ちょうど",
+    "before": "工場の笛が鳴り渡って、",
+    "after": "を知らせた。",
+    "quote": "工場の笛が鳴り渡って、午後十二時ちょうどを知らせた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "12:10",
+    "excerpt": "午後十二時十分",
+    "before": "縁側で新聞をひろげたまま、",
+    "after": "を知らせた。",
+    "quote": "縁側で新聞をひろげたまま、午後十二時十分を知らせた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "12:20",
+    "excerpt": "午後十二時二十分",
+    "before": "客の絶えた店先で、",
+    "after": "を知らせた。",
+    "quote": "客の絶えた店先で、午後十二時二十分を知らせた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "12:30",
+    "excerpt": "午後十二時三十分",
+    "before": "工場の笛が鳴り渡って、",
+    "after": "になったのにも気づかなかった。",
+    "quote": "工場の笛が鳴り渡って、午後十二時三十分になったのにも気づかなかった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "12:40",
+    "excerpt": "午後十二時四十分",
+    "before": "縁側で新聞をひろげたまま、",
+    "after": "になったのにも気づかなかった。",
+    "quote": "縁側で新聞をひろげたまま、午後十二時四十分になったのにも気づかなかった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "12:50",
+    "excerpt": "午後十二時五十分",
+    "before": "客の絶えた店先で、",
+    "after": "になったのにも気づかなかった。",
+    "quote": "客の絶えた店先で、午後十二時五十分になったのにも気づかなかった。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "13:00",
+    "excerpt": "午後一時ちょうど",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後一時ちょうどの影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "13:10",
+    "excerpt": "午後一時十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "手紙を書き終えたのは、午後一時十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "13:20",
+    "excerpt": "午後一時二十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "坂を下りきったところで振り返ると、午後一時二十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "13:30",
+    "excerpt": "午後一時三十分",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後一時三十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "13:40",
+    "excerpt": "午後一時四十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "手紙を書き終えたのは、午後一時四十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "13:50",
+    "excerpt": "午後一時五十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "坂を下りきったところで振り返ると、午後一時五十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "14:00",
+    "excerpt": "午後二時ちょうど",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "の鐘が、寺の方から聞こえてきた。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後二時ちょうどの鐘が、寺の方から聞こえてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "14:10",
+    "excerpt": "午後二時十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "の鐘が、寺の方から聞こえてきた。",
+    "quote": "手紙を書き終えたのは、午後二時十分の鐘が、寺の方から聞こえてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "14:20",
+    "excerpt": "午後二時二十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "の鐘が、寺の方から聞こえてきた。",
+    "quote": "坂を下りきったところで振り返ると、午後二時二十分の鐘が、寺の方から聞こえてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "14:30",
+    "excerpt": "午後二時三十分",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後二時三十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "14:40",
+    "excerpt": "午後二時四十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "手紙を書き終えたのは、午後二時四十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "14:50",
+    "excerpt": "午後二時五十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "坂を下りきったところで振り返ると、午後二時五十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "15:00",
+    "excerpt": "午後三時ちょうど",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後三時ちょうど発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "15:10",
+    "excerpt": "午後三時十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "手紙を書き終えたのは、午後三時十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "15:20",
+    "excerpt": "午後三時二十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "坂を下りきったところで振り返ると、午後三時二十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "15:30",
+    "excerpt": "午後三時三十分",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "の鐘が、寺の方から聞こえてきた。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後三時三十分の鐘が、寺の方から聞こえてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "15:40",
+    "excerpt": "午後三時四十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "の鐘が、寺の方から聞こえてきた。",
+    "quote": "手紙を書き終えたのは、午後三時四十分の鐘が、寺の方から聞こえてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "15:50",
+    "excerpt": "午後三時五十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "の鐘が、寺の方から聞こえてきた。",
+    "quote": "坂を下りきったところで振り返ると、午後三時五十分の鐘が、寺の方から聞こえてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "16:00",
+    "excerpt": "午後四時ちょうど",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後四時ちょうどの影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "16:10",
+    "excerpt": "午後四時十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "手紙を書き終えたのは、午後四時十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "16:20",
+    "excerpt": "午後四時二十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "の影が、長く伸びはじめていた。",
+    "quote": "坂を下りきったところで振り返ると、午後四時二十分の影が、長く伸びはじめていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "16:30",
+    "excerpt": "午後四時三十分",
+    "before": "で、ちょっと行き渋ったが、断わる理由もないと思い、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "で、ちょっと行き渋ったが、断わる理由もないと思い、午後四時三十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "16:40",
+    "excerpt": "午後四時四十分",
+    "before": "手紙を書き終えたのは、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "手紙を書き終えたのは、午後四時四十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "16:50",
+    "excerpt": "午後四時五十分",
+    "before": "坂を下りきったところで振り返ると、",
+    "after": "発の急行で、東京駅を立つことにした。",
+    "quote": "坂を下りきったところで振り返ると、午後四時五十分発の急行で、東京駅を立つことにした。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "17:00",
+    "excerpt": "午後五時ちょうど",
+    "before": "湯屋から戻る道で、",
+    "after": "を指していた。",
+    "quote": "湯屋から戻る道で、午後五時ちょうどを指していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "17:10",
+    "excerpt": "午後五時十分",
+    "before": "帳場の柱時計を見上げると、",
+    "after": "を指していた。",
+    "quote": "帳場の柱時計を見上げると、午後五時十分を指していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "17:20",
+    "excerpt": "午後五時二十分",
+    "before": "洋燈に火を入れたのは、",
+    "after": "を指していた。",
+    "quote": "洋燈に火を入れたのは、午後五時二十分を指していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "17:30",
+    "excerpt": "午後五時三十分",
+    "before": "湯屋から戻る道で、",
+    "after": "を告げる声が、路地の奥から流れてきた。",
+    "quote": "湯屋から戻る道で、午後五時三十分を告げる声が、路地の奥から流れてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "17:40",
+    "excerpt": "午後五時四十分",
+    "before": "帳場の柱時計を見上げると、",
+    "after": "を告げる声が、路地の奥から流れてきた。",
+    "quote": "帳場の柱時計を見上げると、午後五時四十分を告げる声が、路地の奥から流れてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "17:50",
+    "excerpt": "午後五時五十分",
+    "before": "洋燈に火を入れたのは、",
+    "after": "を告げる声が、路地の奥から流れてきた。",
+    "quote": "洋燈に火を入れたのは、午後五時五十分を告げる声が、路地の奥から流れてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "18:00",
+    "excerpt": "午後六時ちょうど",
+    "before": "湯屋から戻る道で、",
+    "after": "の空が、まだ赤みを残していた。",
+    "quote": "湯屋から戻る道で、午後六時ちょうどの空が、まだ赤みを残していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "18:10",
+    "excerpt": "午後六時十分",
+    "before": "帳場の柱時計を見上げると、",
+    "after": "の空が、まだ赤みを残していた。",
+    "quote": "帳場の柱時計を見上げると、午後六時十分の空が、まだ赤みを残していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "18:20",
+    "excerpt": "午後六時二十分",
+    "before": "洋燈に火を入れたのは、",
+    "after": "の空が、まだ赤みを残していた。",
+    "quote": "洋燈に火を入れたのは、午後六時二十分の空が、まだ赤みを残していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "18:30",
+    "excerpt": "午後六時三十分",
+    "before": "湯屋から戻る道で、",
+    "after": "を指していた。",
+    "quote": "湯屋から戻る道で、午後六時三十分を指していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "18:40",
+    "excerpt": "午後六時四十分",
+    "before": "帳場の柱時計を見上げると、",
+    "after": "を指していた。",
+    "quote": "帳場の柱時計を見上げると、午後六時四十分を指していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "18:50",
+    "excerpt": "午後六時五十分",
+    "before": "洋燈に火を入れたのは、",
+    "after": "を指していた。",
+    "quote": "洋燈に火を入れたのは、午後六時五十分を指していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "19:00",
+    "excerpt": "午後七時ちょうど",
+    "before": "湯屋から戻る道で、",
+    "after": "を告げる声が、路地の奥から流れてきた。",
+    "quote": "湯屋から戻る道で、午後七時ちょうどを告げる声が、路地の奥から流れてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "19:10",
+    "excerpt": "午後七時十分",
+    "before": "帳場の柱時計を見上げると、",
+    "after": "を告げる声が、路地の奥から流れてきた。",
+    "quote": "帳場の柱時計を見上げると、午後七時十分を告げる声が、路地の奥から流れてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "19:20",
+    "excerpt": "午後七時二十分",
+    "before": "洋燈に火を入れたのは、",
+    "after": "を告げる声が、路地の奥から流れてきた。",
+    "quote": "洋燈に火を入れたのは、午後七時二十分を告げる声が、路地の奥から流れてきた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "19:30",
+    "excerpt": "午後七時三十分",
+    "before": "湯屋から戻る道で、",
+    "after": "の空が、まだ赤みを残していた。",
+    "quote": "湯屋から戻る道で、午後七時三十分の空が、まだ赤みを残していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "19:40",
+    "excerpt": "午後七時四十分",
+    "before": "帳場の柱時計を見上げると、",
+    "after": "の空が、まだ赤みを残していた。",
+    "quote": "帳場の柱時計を見上げると、午後七時四十分の空が、まだ赤みを残していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "19:50",
+    "excerpt": "午後七時五十分",
+    "before": "洋燈に火を入れたのは、",
+    "after": "の空が、まだ赤みを残していた。",
+    "quote": "洋燈に火を入れたのは、午後七時五十分の空が、まだ赤みを残していた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "20:00",
+    "excerpt": "午後八時ちょうど",
+    "before": "雨戸を閉めようとして、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "雨戸を閉めようとして、午後八時ちょうどの柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "20:10",
+    "excerpt": "午後八時十分",
+    "before": "客はとうに帰り、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "客はとうに帰り、午後八時十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "20:20",
+    "excerpt": "午後八時二十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "机の上の原稿を片づけたのは、午後八時二十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "20:30",
+    "excerpt": "午後八時三十分",
+    "before": "雨戸を閉めようとして、",
+    "after": "を回っていた。",
+    "quote": "雨戸を閉めようとして、午後八時三十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "20:40",
+    "excerpt": "午後八時四十分",
+    "before": "客はとうに帰り、",
+    "after": "を回っていた。",
+    "quote": "客はとうに帰り、午後八時四十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "20:50",
+    "excerpt": "午後八時五十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "を回っていた。",
+    "quote": "机の上の原稿を片づけたのは、午後八時五十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "21:00",
+    "excerpt": "午後九時ちょうど",
+    "before": "雨戸を閉めようとして、",
+    "after": "の風が思いのほか冷たいのに驚いた。",
+    "quote": "雨戸を閉めようとして、午後九時ちょうどの風が思いのほか冷たいのに驚いた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "21:10",
+    "excerpt": "午後九時十分",
+    "before": "客はとうに帰り、",
+    "after": "の風が思いのほか冷たいのに驚いた。",
+    "quote": "客はとうに帰り、午後九時十分の風が思いのほか冷たいのに驚いた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "21:20",
+    "excerpt": "午後九時二十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "の風が思いのほか冷たいのに驚いた。",
+    "quote": "机の上の原稿を片づけたのは、午後九時二十分の風が思いのほか冷たいのに驚いた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "21:30",
+    "excerpt": "午後九時三十分",
+    "before": "雨戸を閉めようとして、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "雨戸を閉めようとして、午後九時三十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "21:40",
+    "excerpt": "午後九時四十分",
+    "before": "客はとうに帰り、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "客はとうに帰り、午後九時四十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "21:50",
+    "excerpt": "午後九時五十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "机の上の原稿を片づけたのは、午後九時五十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "22:00",
+    "excerpt": "午後十時ちょうど",
+    "before": "雨戸を閉めようとして、",
+    "after": "を回っていた。",
+    "quote": "雨戸を閉めようとして、午後十時ちょうどを回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "22:10",
+    "excerpt": "午後十時十分",
+    "before": "客はとうに帰り、",
+    "after": "を回っていた。",
+    "quote": "客はとうに帰り、午後十時十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "22:20",
+    "excerpt": "午後十時二十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "を回っていた。",
+    "quote": "机の上の原稿を片づけたのは、午後十時二十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "22:30",
+    "excerpt": "午後十時三十分",
+    "before": "雨戸を閉めようとして、",
+    "after": "の風が思いのほか冷たいのに驚いた。",
+    "quote": "雨戸を閉めようとして、午後十時三十分の風が思いのほか冷たいのに驚いた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "22:40",
+    "excerpt": "午後十時四十分",
+    "before": "客はとうに帰り、",
+    "after": "の風が思いのほか冷たいのに驚いた。",
+    "quote": "客はとうに帰り、午後十時四十分の風が思いのほか冷たいのに驚いた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "22:50",
+    "excerpt": "午後十時五十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "の風が思いのほか冷たいのに驚いた。",
+    "quote": "机の上の原稿を片づけたのは、午後十時五十分の風が思いのほか冷たいのに驚いた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "23:00",
+    "excerpt": "午後十一時ちょうど",
+    "before": "雨戸を閉めようとして、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "雨戸を閉めようとして、午後十一時ちょうどの柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "23:10",
+    "excerpt": "午後十一時十分",
+    "before": "客はとうに帰り、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "客はとうに帰り、午後十一時十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "23:20",
+    "excerpt": "午後十一時二十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "の柱時計が二つ三つ鳴った。",
+    "quote": "机の上の原稿を片づけたのは、午後十一時二十分の柱時計が二つ三つ鳴った。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "23:30",
+    "excerpt": "午後十一時三十分",
+    "before": "雨戸を閉めようとして、",
+    "after": "を回っていた。",
+    "quote": "雨戸を閉めようとして、午後十一時三十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "23:40",
+    "excerpt": "午後十一時四十分",
+    "before": "客はとうに帰り、",
+    "after": "を回っていた。",
+    "quote": "客はとうに帰り、午後十一時四十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  },
+  {
+    "time": "23:50",
+    "excerpt": "午後十一時五十分",
+    "before": "机の上の原稿を片づけたのは、",
+    "after": "を回っていた。",
+    "quote": "机の上の原稿を片づけたのは、午後十一時五十分を回っていた。",
+    "author": "（サンプル）",
+    "title": "（サンプルデータ・実データに置き換えてください）",
+    "source": {
+      "collection": "sample_placeholder",
+      "author_id": "000000",
+      "file": "sample/placeholder.txt"
+    }
+  }
+]

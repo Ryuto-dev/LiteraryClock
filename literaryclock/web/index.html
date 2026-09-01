@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#12100e">
+<title>文学時計</title>
+
+<!-- 外部ファイル不要のインライン favicon (404 を出さないため) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2312100e'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23d9b382' font-family='serif'%3E%E6%96%87%3C/text%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="modulepreload" href="js/app.js">
+</head>
+
+<body data-theme="ink" data-writing="horizontal" data-transition="fade" data-state="loading">
+
+<!-- 紙の質感 / 粒子ノイズ (外部画像なし・SVG フィルタで生成) -->
+<svg class="noise-defs" aria-hidden="true" focusable="false">
+  <filter id="paper-noise">
+    <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+
+<div class="stage">
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- 起動時のローディング -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot__mark"><span></span><span></span><span></span></div>
+    <p class="boot__text">文学時計を準備しています</p>
+  </div>
+
+  <!-- 本体 -->
+  <main class="clock" id="clock" aria-live="polite" aria-atomic="true">
+    <article class="quote-frame">
+      <p class="quote" id="quote">
+        <span class="quote__before" id="quoteBefore"></span><span
+              class="quote__excerpt" id="quoteExcerpt"></span><span
+              class="quote__after" id="quoteAfter"></span>
+      </p>
+
+      <footer class="credit" id="credit">
+        <span class="credit__rule" aria-hidden="true"></span>
+        <span class="credit__text">
+          <span class="credit__author" id="creditAuthor"></span>
+          <span class="credit__title" id="creditTitle"></span>
+        </span>
+      </footer>
+    </article>
+  </main>
+
+  <!-- 画面下部の情報帯 -->
+  <div class="hud">
+    <div class="hud__clock" id="digitalClock">
+      <span class="hud__time" id="digitalTime">--:--</span>
+      <span class="hud__sep" aria-hidden="true">:</span>
+      <span class="hud__sec" id="digitalSec">--</span>
+    </div>
+    <div class="hud__progress" id="progress" role="presentation">
+      <div class="hud__progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- 状態通知 (データセット欠損・接続断など) -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ヘルプ (H キー) -->
+  <div class="help" id="help" hidden>
+    <div class="help__panel">
+      <h2 class="help__title">操作方法</h2>
+      <dl class="help__list">
+        <dt>T</dt><dd>テーマを切り替える</dd>
+        <dt>W</dt><dd>縦書き / 横書きを切り替える</dd>
+        <dt>A</dt><dd>切替アニメーションを変更する</dd>
+        <dt>+ / -</dt><dd>文字サイズを調整する</dd>
+        <dt>C</dt><dd>出典表示のオン / オフ</dd>
+        <dt>D</dt><dd>デジタル時刻のオン / オフ</dd>
+        <dt>N</dt><dd>次の候補 / 次の時刻を表示 (デバッグ)</dd>
+        <dt>R</dt><dd>再読み込み</dd>
+        <dt>F</dt><dd>全画面表示</dd>
+        <dt>H / Esc</dt><dd>このヘルプを閉じる</dd>
+      </dl>
+      <p class="help__note">設定は端末に保存され、次回起動時も維持されます。</p>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+<noscript>
+  <div class="noscript">この時計の表示には JavaScript が必要です。</div>
+</noscript>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# 文学時計 (LiteraryClock) — Raspberry Pi 自動起動用 systemd ユーザーユニット
+#
+# なぜユーザーユニットか:
+#   kiosk ブラウザは GUI (X11/Wayland) セッションが必要。
+#   システムユニット (root 起動) では DISPLAY / WAYLAND_DISPLAY /
+#   XDG_RUNTIME_DIR の受け渡しが煩雑になりがちなため、
+#   ログインユーザーの systemd --user サービスとして動かす方式を推奨する。
+#   Raspberry Pi OS Bookworm 以降 (labwc/wayfire) は autologin 時に
+#   graphical-session.target を自動で起動するため、この方式と噛み合う。
+#
+# インストール方法 (推奨: scripts/install_pi.sh が自動で行う):
+#   mkdir -p ~/.config/systemd/user
+#   cp systemd/literaryclock.service ~/.config/systemd/user/
+#   # WorkingDirectory / ExecStart のパスをリポジトリの実際の場所に合わせる
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now literaryclock.service
+#
+#   自動起動 (再起動後も有効) には lingering を有効化しておくと確実:
+#     sudo loginctl enable-linger "$USER"
+#
+# ログの確認:
+#   journalctl --user -u literaryclock -f
+#
+# 備考:
+#  - ExecStart のパスは install_pi.sh が実行時に自動で書き換える。
+#    手動で配置する場合は %h (ホームディレクトリ) を使ったパスに直すこと。
+
+[Unit]
+Description=LiteraryClock - 文学時計 (青空文庫コーパスによる全画面時計)
+After=graphical-session.target
+Wants=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/LiteraryClock
+ExecStart=/usr/bin/python3 -m literaryclock --theme ink
+Restart=on-failure
+RestartSec=5
+# ブラウザの子プロセスも含めて確実に終了させる
+KillMode=control-group
+
+[Install]
+WantedBy=graphical-session.target

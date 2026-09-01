@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# 任意 Web フォント (scripts/fetch_fonts.sh で取得するもの。同梱しない)
+literaryclock/web/fonts/*.woff2
+literaryclock/web/fonts/*.woff
+literaryclock/web/fonts/*.ttf
+literaryclock/web/fonts/*.otf
+!literaryclock/web/fonts/.gitkeep
+
+# OS / エディタ
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# ログ・スクリーンショット
+*.log
+/tmp/

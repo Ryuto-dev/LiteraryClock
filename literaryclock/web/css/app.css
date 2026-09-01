@@ -1,0 +1,680 @@
+/* ==========================================================================
+   文学時計 — メインスタイル
+
+   設計方針
+   - 全画面 (kiosk) 前提。スクロールバー・選択・タップハイライトは全て排除
+   - サイズは vmin 基準。Pi の 7 インチ〜4K テレビまで同じ見え方になる
+   - アニメーションは transform / opacity / filter のみ (Pi の GPU で 60fps)
+   - 配色は CSS 変数でテーマ化。data-theme 属性で切替
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. リセット
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  cursor: none;                       /* kiosk ではカーソルを消す */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+/* 開発時 (マウス操作したい場合) は body.show-cursor を付ける */
+body.show-cursor { cursor: default; }
+
+::-webkit-scrollbar { display: none; }
+
+.noise-defs { position: absolute; width: 0; height: 0; }
+
+/* --------------------------------------------------------------------------
+   2. テーマ
+   -------------------------------------------------------------------------- */
+
+/* ink — 墨と和紙。既定テーマ (暗色) */
+body[data-theme="ink"] {
+  --bg: #12100e;
+  --bg-glow: #241f1a;
+  --fg: #efe7db;
+  --fg-dim: #9d938a;
+  --accent: #d9b382;          /* 時刻部分の強調 (金泥) */
+  --accent-soft: #d9b38233;
+  --rule: #ffffff1f;
+  --grain-opacity: 0.045;
+  --vignette: 0.55;
+  --hud-opacity: 0.42;
+}
+
+/* washi — 生成りの和紙に墨。明色 */
+body[data-theme="washi"] {
+  --bg: #efe9dc;
+  --bg-glow: #fbf7ee;
+  --fg: #241f1a;
+  --fg-dim: #6f665c;
+  --accent: #9c3b34;          /* 朱印の赤 */
+  --accent-soft: #9c3b3422;
+  --rule: #241f1a24;
+  --grain-opacity: 0.05;
+  --vignette: 0.3;
+  --hud-opacity: 0.45;
+}
+
+/* night — 深夜の読書灯。極端に暗く、目に優しい */
+body[data-theme="night"] {
+  --bg: #06080c;
+  --bg-glow: #0d131c;
+  --fg: #c8d2de;
+  --fg-dim: #6a7787;
+  --accent: #8fb6d9;
+  --accent-soft: #8fb6d926;
+  --rule: #ffffff14;
+  --grain-opacity: 0.03;
+  --vignette: 0.68;
+  --hud-opacity: 0.3;
+}
+
+/* sepia — 古書の褪せた紙 */
+body[data-theme="sepia"] {
+  --bg: #241a10;
+  --bg-glow: #3a2a1a;
+  --fg: #f0dfc4;
+  --fg-dim: #a89070;
+  --accent: #e0a35c;
+  --accent-soft: #e0a35c26;
+  --rule: #f0dfc41c;
+  --grain-opacity: 0.06;
+  --vignette: 0.5;
+  --hud-opacity: 0.4;
+}
+
+/* mono — 完全な無彩色。E-ink 的な硬質さ */
+body[data-theme="mono"] {
+  --bg: #0a0a0a;
+  --bg-glow: #1a1a1a;
+  --fg: #f2f2f2;
+  --fg-dim: #8a8a8a;
+  --accent: #ffffff;
+  --accent-soft: #ffffff1f;
+  --rule: #ffffff18;
+  --grain-opacity: 0.035;
+  --vignette: 0.6;
+  --hud-opacity: 0.35;
+}
+
+/* --------------------------------------------------------------------------
+   3. ステージ (画面全体)
+   -------------------------------------------------------------------------- */
+.stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  /* 中央からわずかに光が差すグラデーション。単色より奥行きが出る */
+  background:
+    radial-gradient(
+      ellipse 120% 90% at 50% 42%,
+      var(--bg-glow) 0%,
+      var(--bg) 68%
+    );
+  transition: background 900ms ease;
+}
+
+/* 四隅を落として視線を中央へ集める */
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 100% 80% at 50% 50%,
+    transparent 40%,
+    rgba(0, 0, 0, var(--vignette)) 100%
+  );
+  z-index: 3;
+}
+
+/* 紙の粒子。SVG フィルタなので外部画像不要 */
+.grain {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  filter: url(#paper-noise);
+  z-index: 4;
+  /* Pi ではフィルタが重いため、静止させて合成回数を減らす */
+  will-change: auto;
+}
+body[data-theme="washi"] .grain { mix-blend-mode: multiply; }
+
+/* --------------------------------------------------------------------------
+   4. 引用本体
+   -------------------------------------------------------------------------- */
+.clock {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 6vmin 7vmin;
+}
+
+.quote-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4.2vmin;
+  max-width: 78ch;
+  max-height: 100%;
+}
+
+.quote {
+  --quote-size: 4.6vmin;      /* JS が文字数に応じて上書きする */
+  margin: 0;
+  font-size: var(--quote-size);
+  line-height: 1.92;
+  font-weight: 400;
+  letter-spacing: 0.055em;
+  text-align: left;
+  color: var(--fg);
+  /* 日本語組版: 約物の詰め・カーニングを有効化 */
+  font-feature-settings: "palt" 1, "kern" 1, "vert" 1;
+  font-kerning: normal;
+  /* 禁則処理 */
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+  hanging-punctuation: allow-end;
+  /* 文字に極薄い影を置き、粒子ノイズの上でも輪郭を保つ */
+  text-shadow: 0 0.08em 0.6em rgba(0, 0, 0, 0.18);
+}
+body[data-theme="washi"] .quote { text-shadow: none; }
+
+/* 時刻を表す一節 (excerpt) の強調 */
+.quote__excerpt {
+  position: relative;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  /* 下線ではなく「淡い光」で示す。文学作品の引用を損なわない控えめさ */
+  text-shadow:
+    0 0 0.7em var(--accent-soft),
+    0 0.08em 0.6em rgba(0, 0, 0, 0.2);
+  transition: color 600ms ease, text-shadow 600ms ease;
+}
+
+/* 強調をオフにした場合 */
+body[data-highlight="off"] .quote__excerpt {
+  color: inherit;
+  font-weight: 400;
+  letter-spacing: inherit;
+  text-shadow: inherit;
+}
+
+/* excerpt の直下に引かれる細い罫 (アニメーションで伸びる) */
+.quote__excerpt::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.22em;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent) 18%,
+    var(--accent) 82%,
+    transparent
+  );
+  opacity: 0.32;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: rule-in 1400ms 420ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+body[data-highlight="off"] .quote__excerpt::after { display: none; }
+
+@keyframes rule-in {
+  to { transform: scaleX(1); }
+}
+
+/* --------------------------------------------------------------------------
+   5. 出典 (作者・作品名)
+   -------------------------------------------------------------------------- */
+.credit {
+  display: flex;
+  align-items: center;
+  gap: 1.6vmin;
+  font-size: 1.62vmin;
+  color: var(--fg-dim);
+  letter-spacing: 0.16em;
+  font-feature-settings: "palt" 1;
+  opacity: 0;
+  animation: credit-in 1600ms 900ms ease forwards;
+}
+body[data-credit="off"] .credit { display: none; }
+
+@keyframes credit-in {
+  from { opacity: 0; transform: translateY(0.8vmin); }
+  to   { opacity: 1; transform: none; }
+}
+
+.credit__rule {
+  width: 7vmin;
+  height: 1px;
+  background: var(--rule);
+}
+
+.credit__text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.9em;
+  white-space: nowrap;
+}
+.credit__author::before { content: "── "; opacity: 0.5; }
+.credit__title::before  { content: "『"; opacity: 0.6; }
+.credit__title::after   { content: "』"; opacity: 0.6; }
+
+/* --------------------------------------------------------------------------
+   6. 縦書きモード
+   -------------------------------------------------------------------------- */
+body[data-writing="vertical"] .clock {
+  padding: 7vmin 6vmin;
+}
+
+body[data-writing="vertical"] .quote-frame {
+  flex-direction: row-reverse;   /* 出典は本文の左側 (縦書きの慣習) */
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%;
+  gap: 3.4vmin;
+}
+
+body[data-writing="vertical"] .quote {
+  writing-mode: vertical-rl;
+  /* mixed = 日本語は正立・欧文/数字は横倒し。
+     upright にすると欧文が 1 文字ずつ縦に並び、
+     原文中の "T" や年号などが著しく読みにくくなる */
+  text-orientation: mixed;
+  max-height: 82vh;
+  text-align: start;
+  line-height: 2.0;
+  /* vert/vkrn: 縦書き用の字形置換とカーニング (括弧・句読点の向きが変わる) */
+  font-feature-settings: "palt" 1, "kern" 1, "vert" 1, "vkrn" 1;
+}
+
+/* 縦中横: 2 桁までの半角数字を 1 マスに収める (「昭和42年」など) */
+body[data-writing="vertical"] .quote .tcy {
+  text-combine-upright: all;
+}
+
+body[data-writing="vertical"] .credit {
+  writing-mode: vertical-rl;
+  align-self: flex-start;
+  margin-top: 2vmin;
+}
+body[data-writing="vertical"] .credit__rule {
+  width: 1px;
+  height: 7vmin;
+}
+body[data-writing="vertical"] .credit__text {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+body[data-writing="vertical"] .quote__excerpt::after {
+  left: auto;
+  right: -0.22em;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  height: auto;
+  background: linear-gradient(
+    180deg, transparent, var(--accent) 18%, var(--accent) 82%, transparent
+  );
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation-name: rule-in-v;
+}
+@keyframes rule-in-v {
+  to { transform: scaleY(1); }
+}
+
+/* --------------------------------------------------------------------------
+   7. 切替アニメーション
+   本文差し替え時に .is-out → 差し替え → .is-in で入場
+   -------------------------------------------------------------------------- */
+.quote-frame {
+  transition:
+    opacity var(--anim-dur, 900ms) cubic-bezier(0.4, 0, 0.2, 1),
+    transform var(--anim-dur, 900ms) cubic-bezier(0.4, 0, 0.2, 1),
+    filter var(--anim-dur, 900ms) ease;
+}
+
+/* fade — 既定。ごく僅かに上へ抜ける */
+body[data-transition="fade"] .quote-frame.is-out {
+  opacity: 0;
+  transform: translateY(-1.2vmin);
+}
+body[data-transition="fade"] .quote-frame.is-in {
+  opacity: 0;
+  transform: translateY(1.2vmin);
+}
+
+/* blur — 焦点が合っていくような入場 */
+body[data-transition="blur"] .quote-frame.is-out {
+  opacity: 0;
+  filter: blur(0.9vmin);
+  transform: scale(1.015);
+}
+body[data-transition="blur"] .quote-frame.is-in {
+  opacity: 0;
+  filter: blur(1.1vmin);
+  transform: scale(0.988);
+}
+
+/* slide — 横 (縦書き時は縦) にずらす */
+body[data-transition="slide"] .quote-frame.is-out {
+  opacity: 0;
+  transform: translateX(-4vmin);
+}
+body[data-transition="slide"] .quote-frame.is-in {
+  opacity: 0;
+  transform: translateX(4vmin);
+}
+body[data-writing="vertical"][data-transition="slide"] .quote-frame.is-out {
+  transform: translateY(-4vmin);
+}
+body[data-writing="vertical"][data-transition="slide"] .quote-frame.is-in {
+  transform: translateY(4vmin);
+}
+
+/* none — 即時切替 */
+body[data-transition="none"] .quote-frame {
+  transition: none;
+}
+
+/* typewriter — 1 文字ずつ現れる。JS が span を生成する */
+.quote .ch {
+  display: inline;
+  opacity: 0;
+  animation: ch-in 520ms ease forwards;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes ch-in {
+  from { opacity: 0; filter: blur(0.28em); }
+  to   { opacity: 1; filter: none; }
+}
+/* typewriter 中は frame 全体のフェードを行わない */
+body[data-transition="typewriter"] .quote-frame.is-in {
+  opacity: 1;
+  transform: none;
+}
+body[data-transition="typewriter"] .quote-frame.is-out {
+  opacity: 0;
+  transform: translateY(-0.8vmin);
+}
+
+/* --------------------------------------------------------------------------
+   8. HUD (デジタル時刻・進捗)
+   -------------------------------------------------------------------------- */
+.hud {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  right: 0;
+  bottom: 3.2vmin;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4vmin;
+  pointer-events: none;
+  opacity: var(--hud-opacity);
+  transition: opacity 700ms ease;
+}
+
+.hud__clock {
+  display: flex;
+  align-items: baseline;
+  gap: 0.1em;
+  font-family: var(--font-mono);
+  font-size: 1.55vmin;
+  letter-spacing: 0.32em;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+}
+body[data-digital="off"] .hud__clock { visibility: hidden; }
+
+.hud__sec {
+  font-size: 0.78em;
+  opacity: 0.55;
+}
+.hud__sep {
+  opacity: 0.4;
+  animation: blink 2s steps(1, end) infinite;
+}
+@keyframes blink {
+  0%, 49%   { opacity: 0.4; }
+  50%, 100% { opacity: 0.08; }
+}
+
+/* 次のスロットまでの進捗 */
+.hud__progress {
+  position: relative;
+  width: 22vmin;
+  height: 1px;
+  background: var(--rule);
+  overflow: hidden;
+}
+body[data-progress="off"] .hud__progress { visibility: hidden; }
+
+.hud__progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, transparent, var(--accent));
+  opacity: 0.6;
+  transition: width 1000ms linear;
+}
+
+/* --------------------------------------------------------------------------
+   9. 起動画面
+   -------------------------------------------------------------------------- */
+.boot {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3vmin;
+  background: var(--bg);
+  transition: opacity 700ms ease, visibility 700ms;
+}
+body[data-state="ready"] .boot,
+body[data-state="error"] .boot {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.boot__mark {
+  display: flex;
+  gap: 1.1vmin;
+}
+.boot__mark span {
+  width: 0.5vmin;
+  height: 3.4vmin;
+  background: var(--fg-dim);
+  opacity: 0.25;
+  animation: boot-pulse 1.3s ease-in-out infinite;
+}
+.boot__mark span:nth-child(2) { animation-delay: 0.16s; }
+.boot__mark span:nth-child(3) { animation-delay: 0.32s; }
+
+@keyframes boot-pulse {
+  0%, 100% { opacity: 0.18; transform: scaleY(0.7); }
+  50%      { opacity: 0.8;  transform: scaleY(1); }
+}
+
+.boot__text {
+  margin: 0;
+  font-size: 1.7vmin;
+  letter-spacing: 0.3em;
+  color: var(--fg-dim);
+}
+
+/* 本体は準備完了まで隠す */
+body[data-state="loading"] .clock,
+body[data-state="loading"] .hud { opacity: 0; }
+
+/* --------------------------------------------------------------------------
+   10. トースト / ヘルプ / noscript
+   -------------------------------------------------------------------------- */
+.toast {
+  position: absolute;
+  z-index: 9;
+  top: 3vmin;
+  left: 50%;
+  transform: translate(-50%, -1.5vmin);
+  padding: 1vmin 2.4vmin;
+  font-size: 1.5vmin;
+  letter-spacing: 0.12em;
+  color: var(--fg);
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--rule);
+  border-radius: 0.4vmin;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 400ms ease, transform 400ms ease, visibility 400ms;
+  pointer-events: none;
+  max-width: 80vw;
+  text-align: center;
+}
+.toast.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+body[data-theme="washi"] .toast {
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--fg);
+}
+
+.help {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+}
+.help[hidden] { display: none; }
+
+.help__panel {
+  max-width: 52ch;
+  padding: 4vmin 5vmin;
+  border: 1px solid var(--rule);
+  border-radius: 0.6vmin;
+  background: var(--bg);
+  color: var(--fg);
+}
+.help__title {
+  margin: 0 0 2.6vmin;
+  font-size: 2.3vmin;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+}
+.help__list {
+  display: grid;
+  grid-template-columns: 8ch 1fr;
+  gap: 1.15vmin 2vmin;
+  margin: 0;
+  font-size: 1.62vmin;
+  line-height: 1.6;
+}
+.help__list dt {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.help__list dd {
+  margin: 0;
+  color: var(--fg-dim);
+}
+.help__note {
+  margin: 3vmin 0 0;
+  font-size: 1.38vmin;
+  color: var(--fg-dim);
+  opacity: 0.7;
+  letter-spacing: 0.08em;
+}
+
+.noscript {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: #12100e;
+  color: #efe7db;
+  font-size: 2.4vmin;
+  letter-spacing: 0.2em;
+}
+
+/* --------------------------------------------------------------------------
+   11. 画面サイズ・環境への適応
+   -------------------------------------------------------------------------- */
+
+/* 公式 7 インチタッチ (800x480) など小型・横長画面 */
+@media (max-height: 520px) {
+  .quote { line-height: 1.78; }
+  .quote-frame { gap: 3vmin; }
+  .hud { bottom: 2.2vmin; }
+}
+
+/* 縦長 (縦置きディスプレイ) では縦書きが映えるため余白を調整 */
+@media (orientation: portrait) {
+  .clock { padding: 8vmin 6vmin; }
+  .quote-frame { max-width: 92vw; }
+}
+
+/* 4K テレビなど超大画面では ch 基準の最大幅を少し狭めて可読性を保つ */
+@media (min-width: 2200px) {
+  .quote-frame { max-width: 64ch; }
+}
+
+/* OS 側でアニメーション低減が指定されている場合は敬意を払う */
+@media (prefers-reduced-motion: reduce) {
+  .quote-frame,
+  .hud__progress-fill { transition-duration: 1ms; }
+  .quote .ch,
+  .credit,
+  .quote__excerpt::after,
+  .boot__mark span,
+  .hud__sep {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .quote__excerpt::after { transform: scaleX(1); }
+}
