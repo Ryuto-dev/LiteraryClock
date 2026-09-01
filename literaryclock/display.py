@@ -163,6 +163,13 @@ def launch_kiosk(
         # 指定しないと、XWayland 経由の起動に失敗する/表示がぼやけることがある。
         if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY"):
             cmd += ["--ozone-platform=wayland", "--enable-features=UseOzonePlatform"]
+            # 複数ディスプレイ環境向け：環境変数でウィンドウの表示位置・サイズを指定可能にする
+            window_pos = os.environ.get("LITCLOCK_WINDOW_POSITION")
+            window_size = os.environ.get("LITCLOCK_WINDOW_SIZE")
+            if window_pos:
+                cmd += [f"--window-position={window_pos}"]
+            if window_size:
+                cmd += [f"--window-size={window_size}"]
         cmd += [f"--user-data-dir={profile}", "--app=" + url]
 
     log.info("ブラウザを起動します: %s", name)
