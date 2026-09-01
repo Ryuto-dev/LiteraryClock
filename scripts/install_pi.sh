@@ -9,6 +9,10 @@
 #   cd LiteraryClock
 #   bash scripts/install_pi.sh
 #
+#   # HDMI が 2 口あり、備モニタ (2 番目) に表示したい場合:
+#   bash scripts/install_pi.sh --monitor 1
+#   bash scripts/install_pi.sh --monitor HDMI-2
+#
 # 前提:
 #   - Raspberry Pi OS (Bookworm 以降推奨) で GUI autologin が有効なこと
 #     (raspi-config > System Options > Boot / Auto Login > Desktop Autologin)
@@ -19,6 +23,42 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SERVICE_NAME="literaryclock.service"
 USER_UNIT_DIR="${HOME}/.config/systemd/user"
+MONITOR=""
+
+# --------------------------------------------------------------------------
+# 0. 引数
+# --------------------------------------------------------------------------
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --monitor)
+      MONITOR="${2:-}"
+      shift 2
+      ;;
+    --monitor=*)
+      MONITOR="${1#*=}"
+      shift
+      ;;
+    -h|--help)
+      cat <<'USAGE'
+使い方: bash scripts/install_pi.sh [--monitor SPEC]
+
+  --monitor SPEC  表示先ディスプレイを固定する。
+                  番号 (0, 1) / コネクタ名 (HDMI-1, HDMI-2, HDMI-A-2) /
+                  primary, left, right, top, bottom が使える。
+                  省略すると OS 任せ (通常はプライマリ) になる。
+
+例:
+  bash scripts/install_pi.sh --monitor 1
+  bash scripts/install_pi.sh --monitor HDMI-2
+USAGE
+      exit 0
+      ;;
+    *)
+      echo "不明なオプション: $1  (--help で使い方を表示)" >&2
+      exit 2
+      ;;
+  esac
+done
 
 echo "=== 文学時計 セットアップ ==="
 echo "リポジトリ: ${REPO_DIR}"
@@ -60,12 +100,29 @@ fi
 echo
 
 # --------------------------------------------------------------------------
-# 3. systemd --user サービスの配置
+# 3. ディスプレイの確認 (Raspberry Pi は HDMI が 2 系統)
+# --------------------------------------------------------------------------
+echo "--- 接続中のディスプレイ ---"
+python3 -m literaryclock monitors 2>/dev/null || \
+  echo "  (検出できませんでした。GUI セッション外から実行している可能性があります)"
+echo
+
+if [ -n "${MONITOR}" ]; then
+  echo "表示先ディスプレイを '${MONITOR}' に固定します。"
+else
+  echo "表示先ディスプレイ: OS 任せ (通常はプライマリ)"
+  echo "  別の画面に出したい場合は: bash scripts/install_pi.sh --monitor 1"
+fi
+echo
+
+# --------------------------------------------------------------------------
+# 4. systemd --user サービスの配置
 # --------------------------------------------------------------------------
 mkdir -p "${USER_UNIT_DIR}"
 sed \
   -e "s#%h/LiteraryClock#${REPO_DIR}#g" \
   -e "s#/usr/bin/python3 -m literaryclock#$(command -v python3) -m literaryclock#g" \
+  -e "s#^Environment=LITCLOCK_MONITOR=.*#Environment=LITCLOCK_MONITOR=${MONITOR}#" \
   "${REPO_DIR}/systemd/${SERVICE_NAME}" > "${USER_UNIT_DIR}/${SERVICE_NAME}"
 
 systemctl --user daemon-reload
@@ -88,5 +145,9 @@ echo "=== セットアップ完了 ==="
 echo "今すぐ試す:"
 echo "  systemctl --user start ${SERVICE_NAME}"
 echo "  journalctl --user -u literaryclock -f   # ログを見る"
+echo
+echo "表示先の画面をあとから変える:"
+echo "  python3 -m literaryclock monitors        # 番号とコネクタ名を確認"
+echo "  bash scripts/install_pi.sh --monitor 1   # 再実行するだけ"
 echo
 echo "次回 GUI ログイン時から自動的に全画面で起動します。"

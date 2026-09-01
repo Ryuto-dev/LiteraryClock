@@ -20,6 +20,8 @@ Raspberry Pi での kiosk 運用を第一の目標としていますが、Python
 - **欠損データへの耐性** — 該当時刻のデータが無い場合、直近の過去スロットで代替表示。
 - **kiosk 運用を想定した堅牢性** — 通信断からの自動復旧、スリープ復帰時刻の再同期、
   累積誤差の無いスロット切替タイマー。
+- **マルチモニタ対応** — Raspberry Pi の HDMI 2 口にモニタを 2 台繋いだ状態でも、
+  `--monitor` で表示先を番号・コネクタ名・位置から簡単に指定できる。
 - **キーボードショートカット** — テーマ・組み方向・アニメーション・文字サイズなどを
   その場で調整可能 (`H` キーでヘルプ表示)。設定は端末に保存される。
 
@@ -59,6 +61,9 @@ python3 -m literaryclock preview 16:40
    git clone https://github.com/Ryuto-dev/LiteraryClock.git ~/LiteraryClock
    cd ~/LiteraryClock
    bash scripts/install_pi.sh
+
+   # モニタを 2 台繋いでいて、 2 番目の HDMI に出したい場合
+   bash scripts/install_pi.sh --monitor 1
    ```
    スクリプトが以下を行います。
    - `chromium-browser` / `fonts-noto-cjk` (日本語明朝) / `unclutter` の apt インストール
@@ -86,6 +91,8 @@ sudo loginctl disable-linger "$USER"   # 他のユーザーサービスが無け
 ```
 literary-clock                    全画面で時計を起動 (既定)
 literary-clock --no-kiosk         ブラウザを起動せずサーバのみ動かす
+literary-clock --monitor 1        2 番目の画面 (HDMI) に全画面表示する
+literary-clock monitors           接続中のディスプレイを一覧表示する
 literary-clock validate <file>    データセットを検証する
 literary-clock preview 16:40      指定時刻の引用を端末に表示する
 ```
@@ -105,8 +112,100 @@ literary-clock preview 16:40      指定時刻の引用を端末に表示する
 | `--time-speed FLOAT` | 時間の進みを N 倍速に (デモ用) | `1.0` |
 | `--host / --port` | 待受アドレス | `127.0.0.1:8730` |
 | `--config PATH` | 設定ファイル (JSON) | 自動探索 |
+| `--monitor SPEC` | 表示先ディスプレイ | OS 任せ |
+| `--list-monitors` | 接続中の画面を一覧表示して終了 | — |
+| `--strict-monitor` | `--monitor` が見つからない時にエラー終了 | プライマリへ退避 |
+| `--window-position X,Y` | ウィンドウ位置を直接指定 | なし |
+| `--window-size W,H` | ウィンドウサイズを直接指定 | なし |
 
 設定の優先順位: **デフォルト → 設定ファイル → 環境変数 (`LITCLOCK_*`) → コマンドライン引数**
+
+## モニタの指定 (HDMI 2 口を使う場合)
+
+Raspberry Pi 4 / 5 には HDMI 出力が 2 系統あります。モニタを 2 台繋いだ状態でも、
+どちらに時計を出すかを `--monitor` で指定できます。
+
+### 1. まず接続されている画面を確認する
+
+```bash
+literary-clock monitors      # または: python3 -m literaryclock monitors
+```
+
+```
+検出されたディスプレイ: 2 台  (* = プライマリ)
+
+  [0]* HDMI-1       1920x1080+0+0       Dell U2415
+  [1]  HDMI-2       3840x2160+1920+0    Sony TV
+
+使い方:
+  literary-clock --monitor 1
+  literary-clock --monitor HDMI-2
+  LITCLOCK_MONITOR=1 literary-clock
+```
+
+### 2. 表示先を指定して起動する
+
+次のどの書き方でも同じ画面を選べます。覚えやすいものを使ってください。
+
+```bash
+literary-clock --monitor 1          # 一覧の番号 (0 始まり)
+literary-clock --monitor HDMI-2     # コネクタ名
+literary-clock --monitor right      # 位置 (left / right / top / bottom)
+literary-clock --monitor primary    # プライマリ
+literary-clock --monitor Sony       # モニタ名の一部 (部分一致)
+```
+
+コネクタ名の表記ゆれ (X11 は `HDMI-2`、Wayland は `HDMI-A-2`) は吸収されるので、
+`hdmi2` のようなラフな指定でも動きます。
+
+環境変数や設定ファイルでも指定できます。
+
+```bash
+LITCLOCK_MONITOR=1 literary-clock
+```
+
+```json
+{ "monitor": "HDMI-2" }
+```
+
+### 3. 自動起動 (systemd) での指定
+
+セットアップ時に渡すのが一番簡単です。
+
+```bash
+bash scripts/install_pi.sh --monitor 1
+```
+
+すでにインストール済みの場合は、同じコマンドを再実行するか、ユニットを直接編集します。
+
+```bash
+# ~/.config/systemd/user/literaryclock.service の
+#   Environment=LITCLOCK_MONITOR=
+# を
+#   Environment=LITCLOCK_MONITOR=1
+# に変えてから
+systemctl --user daemon-reload
+systemctl --user restart literaryclock.service
+```
+
+### 指定した画面が見つからないとき
+
+既定では警告を出してプライマリに表示します (モニタを抜いた状態でも時計が止まらないため)。
+意図した画面でなければ起動してほしくない場合は `--strict-monitor` を付けてください。
+
+```bash
+literary-clock --monitor HDMI-2 --strict-monitor   # 見つからなければエラー終了
+```
+
+ディスプレイ自体が検出できない環境では、座標を直接指定できます。
+
+```bash
+literary-clock --window-position 1920,0 --window-size 1920,1080
+```
+
+> 検出は `xrandr` (X11) → `wlr-randr` / `swaymsg` (Wayland) → `/sys/class/drm` の
+> 順に best-effort で行います。Wayland で `wlr-randr` が無い場合は
+> `sudo apt install wlr-randr` で入れると正確な配置が取得できます。
 
 ## 画面内キーボードショートカット
 
@@ -190,10 +289,11 @@ bash scripts/fetch_fonts.sh
 
 ```
 literaryclock/
-  cli.py         コマンドラインインタフェース (run / validate / preview)
+  cli.py         コマンドラインインタフェース (run / validate / preview / monitors)
   config.py      設定の読込・マージ (デフォルト → ファイル → 環境変数 → CLI)
   dataset.py     literary_clock.json の読込・検証・時刻引き当て
   server.py      静的配信 + JSON API (http.server ベース、依存なし)
+  monitors.py    接続ディスプレイの検出・選択 (xrandr / wlr-randr / swaymsg / sysfs)
   display.py     kiosk ブラウザ起動・画面消灯無効化 (X11/Wayland 両対応)
   web/
     index.html   画面構造
@@ -217,8 +317,8 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
-`tests/` には設定・データセット・サーバ (実際に HTTP サーバを起動して検証) の
-122 件のテストがあります。`scripts/shots.py` は Playwright で各テーマ・組み方向の
+`tests/` には設定・データセット・サーバ (実際に HTTP サーバを起動して検証)・
+マルチモニタ検出の 174 件のテストがあります。`scripts/shots.py` は Playwright で各テーマ・組み方向の
 スクリーンショットを撮る開発用ツールです。
 
 ## トラブルシューティング
@@ -232,6 +332,12 @@ pytest
   `--ozone-platform=wayland` を付与しますが、うまくいかない場合は
   `raspi-config` で X11 に切り替えることも可能です。
 - **ポートが使用中というエラー** — `--port` で別の待受ポートを指定してください。
+- **意図しない方のモニタに表示される** — `literary-clock monitors` で番号とコネクタ名を
+  確認し、`--monitor 1` のように指定してください。自動起動の場合は
+  `bash scripts/install_pi.sh --monitor 1` を再実行すれば反映されます。
+- **`monitors` でディスプレイが検出されない** — GUI セッション上 (SSH ではなく
+  デスクトップの端末) から実行してください。Wayland なら
+  `sudo apt install wlr-randr` で検出精度が上がります。
 
 ## ライセンス
 

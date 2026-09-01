@@ -53,6 +53,16 @@ DEFAULTS: dict[str, Any] = {
     "kiosk": True,
     # ブラウザ実行ファイル (空なら自動検出)
     "browser": "",
+    # --- ディスプレイ (Raspberry Pi は HDMI が 2 系統) ---
+    # 表示先モニタ。インデックス (0,1..) / コネクタ名 (HDMI-1, HDMI-A-2) /
+    # キーワード (primary, left, right, top, bottom) / メーカー名の部分一致。
+    # 空なら OS 任せ (通常はプライマリ)。
+    "monitor": "",
+    # 指定モニタが見つからない場合にプライマリへフォールバックする
+    "monitor_fallback": True,
+    # ウィンドウ位置・サイズの直接指定 ("X,Y" / "W,H")。--monitor より優先。
+    "window_position": "",
+    "window_size": "",
     # マウスカーソルを隠す (unclutter があれば使用)
     "hide_cursor": True,
     # 画面のスクリーンセーバ/DPMS を無効化する
@@ -72,6 +82,7 @@ _BOOL_KEYS = {
     "kiosk",
     "hide_cursor",
     "disable_blanking",
+    "monitor_fallback",
 }
 _INT_KEYS = {"port", "rotate_seconds"}
 _FLOAT_KEYS = {"font_scale", "time_speed"}
@@ -136,6 +147,23 @@ def _coerce(key: str, raw: Any) -> Any:
     return raw
 
 
+def _validate_pair(key: str, raw: Any, *, allow_negative: bool) -> None:
+    """"X,Y" / "W,H" 形式の値を検証する (Chromium のフラグにそのまま渡すため)."""
+    text = str(raw or "").strip()
+    if not text:
+        return
+    parts = text.split(",")
+    if len(parts) != 2:
+        raise ConfigError(f"{key} は \"X,Y\" 形式で指定してください: {raw!r}")
+    for part in parts:
+        part = part.strip()
+        body = part[1:] if allow_negative and part.startswith("-") else part
+        if not body.isdigit():
+            raise ConfigError(f"{key} は整数のカンマ区切りで指定してください: {raw!r}")
+    if not allow_negative and any(int(p) <= 0 for p in parts):
+        raise ConfigError(f"{key} は正の整数で指定してください: {raw!r}")
+
+
 def _validate(values: dict[str, Any]) -> None:
     if values["theme"] not in THEMES:
         raise ConfigError(f"theme は {THEMES} のいずれかです: {values['theme']!r}")
@@ -163,6 +191,9 @@ def _validate(values: dict[str, Any]) -> None:
         hh, mm = int(parts[0]), int(parts[1])
         if not (0 <= hh <= 23 and 0 <= mm <= 59):
             raise ConfigError(f"fake_time が範囲外です: {fake!r}")
+    # ウィンドウ位置は負の座標 (プライマリの左側にあるモニタ) もあり得る
+    _validate_pair("window_position", values.get("window_position"), allow_negative=True)
+    _validate_pair("window_size", values.get("window_size"), allow_negative=False)
 
 
 def load_config_file(path: Path | None = None) -> dict[str, Any]:

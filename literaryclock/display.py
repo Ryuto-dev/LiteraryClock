@@ -13,6 +13,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from .monitors import Monitor, MonitorError, detect_monitors, format_table, resolve
+
 log = logging.getLogger("literaryclock.display")
 
 # Raspberry Pi OS / 一般的な Linux で見つかるブラウザ候補
@@ -120,12 +122,88 @@ def hide_cursor() -> subprocess.Popen | None:
         return None
 
 
+def select_monitor(
+    spec: str = "",
+    fallback: bool = True,
+) -> Monitor | None:
+    """``--monitor`` の指定から表示先モニタを決める.
+
+    - spec が空 → None (OS 任せ = 通常はプライマリ)
+    - 見つからない場合、fallback=True なら警告を出してプライマリへ、
+      fallback=False なら :class:`MonitorError` をそのまま送出する。
+    """
+    spec = (spec or "").strip()
+    if not spec:
+        return None
+
+    monitors = detect_monitors()
+    try:
+        chosen = resolve(spec, monitors)
+    except MonitorError as exc:
+        if not fallback:
+            raise
+        log.warning("%s", exc)
+        log.warning("→ プライマリディスプレイで起動します。")
+        return None
+
+    if chosen is not None:
+        if not chosen.active:
+            log.warning(
+                "ディスプレイ %s は現在無効 (未使用) です。表示されない可能性があります。",
+                chosen.name,
+            )
+        log.info(
+            "表示先ディスプレイ: [%d] %s (%s)",
+            chosen.index, chosen.name, chosen.geometry,
+        )
+    return chosen
+
+
+def list_monitors_text() -> str:
+    """検出されたディスプレイの一覧文字列を返す."""
+    return format_table(detect_monitors())
+
+
+def _window_flags(
+    monitor: Monitor | None,
+    window_position: str = "",
+    window_size: str = "",
+) -> list[str]:
+    """Chromium に渡すウィンドウ配置フラグを組み立てる.
+
+    優先順位: 明示の window_position/window_size
+                → --monitor で選んだモニタの座標
+                → 環境変数 LITCLOCK_WINDOW_POSITION / LITCLOCK_WINDOW_SIZE
+    """
+    pos = (window_position or "").strip() or os.environ.get("LITCLOCK_WINDOW_POSITION", "").strip()
+    size = (window_size or "").strip() or os.environ.get("LITCLOCK_WINDOW_SIZE", "").strip()
+
+    if monitor is not None:
+        if not (window_position or "").strip():
+            pos = monitor.position_arg
+        if not (window_size or "").strip() and monitor.width and monitor.height:
+            size = monitor.size_arg
+
+    flags: list[str] = []
+    if pos:
+        flags.append(f"--window-position={pos}")
+    if size:
+        flags.append(f"--window-size={size}")
+    return flags
+
+
 def launch_kiosk(
     url: str,
     browser: str = "",
     profile_dir: str | None = None,
+    monitor: Monitor | None = None,
+    window_position: str = "",
+    window_size: str = "",
 ) -> subprocess.Popen | None:
     """ブラウザを kiosk (全画面) モードで起動する.
+
+    monitor を指定すると、そのディスプレイの座標にウィンドウを配置して
+    全画面化する (Raspberry Pi の HDMI 2 口同時接続対応)。
 
     成功時は Popen を返す。ブラウザが無い/GUI が無い場合は None。
     """
@@ -149,9 +227,17 @@ def launch_kiosk(
 
     name = Path(exe).name
     cmd = [exe]
+    flags = _window_flags(monitor, window_position, window_size)
 
     if "firefox" in name:
+        # Firefox には --window-position が無いので、ウィンドウマネージャ側で
+        # 移動させる (X11 のみ, best-effort)。
         cmd += ["--kiosk", url]
+        if monitor is not None:
+            log.info(
+                "Firefox はモニタ指定に限定対応です。起動後に %s へ移動を試みます。",
+                monitor.name,
+            )
     else:
         profile = profile_dir or str(
             Path(tempfile.gettempdir()) / "literaryclock-chromium-profile"
@@ -163,18 +249,15 @@ def launch_kiosk(
         # 指定しないと、XWayland 経由の起動に失敗する/表示がぼやけることがある。
         if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY"):
             cmd += ["--ozone-platform=wayland", "--enable-features=UseOzonePlatform"]
-            # 複数ディスプレイ環境向け：環境変数でウィンドウの表示位置・サイズを指定可能にする
-            window_pos = os.environ.get("LITCLOCK_WINDOW_POSITION")
-            window_size = os.environ.get("LITCLOCK_WINDOW_SIZE")
-            if window_pos:
-                cmd += [f"--window-position={window_pos}"]
-            if window_size:
-                cmd += [f"--window-size={window_size}"]
+        # 複数ディスプレイ環境向けのウィンドウ配置 (X11 / Wayland 共通)
+        cmd += flags
         cmd += [f"--user-data-dir={profile}", "--app=" + url]
 
     log.info("ブラウザを起動します: %s", name)
+    if flags:
+        log.debug("ウィンドウ配置: %s", " ".join(flags))
     try:
-        return subprocess.Popen(
+        proc = subprocess.Popen(
             cmd,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -182,3 +265,21 @@ def launch_kiosk(
     except OSError as exc:
         log.error("ブラウザの起動に失敗しました: %s", exc)
         return None
+
+    if monitor is not None and "firefox" in name:
+        move_window_to_monitor(monitor)
+    return proc
+
+
+def move_window_to_monitor(monitor: Monitor, title_hint: str = "") -> bool:
+    """X11 上で既存ウィンドウを指定モニタへ移動する (best-effort).
+
+    Chromium は --window-position で指定できるため主に Firefox 向け。
+    wmctrl / xdotool が無ければ何もせず False を返す。
+    """
+    if not os.environ.get("DISPLAY"):
+        log.debug("X11 ではないためウィンドウ移動をスキップ")
+        return False
+    geom = f"0,{monitor.x},{monitor.y},{monitor.width or -1},{monitor.height or -1}"
+    pattern = title_hint or ":ACTIVE:"
+    return _run(["wmctrl", "-r", pattern, "-e", geom], "ウィンドウをモニタへ移動")
