@@ -2,6 +2,8 @@
 
   literary-clock                  … 全画面で時計を起動
   literary-clock --no-kiosk       … サーバのみ (ブラウザは手動で開く)
+  literary-clock --monitor 1      … 2 番目の HDMI 出力に全画面表示
+  literary-clock monitors         … 接続中のディスプレイ一覧を表示
   literary-clock validate <file>  … データセットを検証
   literary-clock preview 16:40    … 指定時刻の引用を端末に表示
 """
@@ -23,7 +25,10 @@ from .display import (
     disable_screen_blanking,
     hide_cursor,
     launch_kiosk,
+    list_monitors_text,
+    select_monitor,
 )
+from .monitors import MonitorError
 from .server import ClockServer
 
 log = logging.getLogger("literaryclock")
@@ -48,6 +53,10 @@ def build_parser() -> argparse.ArgumentParser:
             "  literary-clock --dataset data/literary_clock.json\n"
             "  literary-clock --theme washi --writing-mode vertical\n"
             "  literary-clock --no-kiosk --host 0.0.0.0 --port 8730\n"
+            "  literary-clock monitors                # ディスプレイ一覧\n"
+            "  literary-clock --monitor 1             # 2 番目の画面に表示\n"
+            "  literary-clock --monitor HDMI-2        # コネクタ名で指定\n"
+            "  literary-clock --monitor right         # 右側の画面に表示\n"
             "  literary-clock validate data/literary_clock.json\n"
             "  literary-clock preview 16:40\n"
         ),
@@ -80,6 +89,21 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--no-highlight", dest="highlight_excerpt", action="store_false",
                    default=None, help="時刻部分を強調表示しない")
 
+    # ディスプレイ (Raspberry Pi は HDMI 2 系統)
+    m = p.add_argument_group("ディスプレイ (マルチモニタ)")
+    m.add_argument("--monitor", metavar="SPEC",
+                   help="表示先の画面。番号 (0,1) / コネクタ名 (HDMI-1, HDMI-A-2) / "
+                        "primary,left,right,top,bottom / モニタ名の一部")
+    m.add_argument("--list-monitors", action="store_true",
+                   help="接続中のディスプレイを一覧表示して終了する")
+    m.add_argument("--strict-monitor", dest="monitor_fallback", action="store_false",
+                   default=None,
+                   help="--monitor が見つからない場合にプライマリへ逃げずエラー終了する")
+    m.add_argument("--window-position", dest="window_position", metavar="X,Y",
+                   help="ウィンドウ位置を直接指定 (--monitor より優先)")
+    m.add_argument("--window-size", dest="window_size", metavar="W,H",
+                   help="ウィンドウサイズを直接指定 (--monitor より優先)")
+
     # 動作
     r = p.add_argument_group("動作")
     r.add_argument("--no-kiosk", dest="kiosk", action="store_false", default=None,
@@ -106,6 +130,9 @@ def build_parser() -> argparse.ArgumentParser:
     pv.add_argument("--dataset", help="literary_clock.json のパス")
     pv.add_argument("-v", "--verbose", action="store_true", help="詳細ログ")
 
+    mo = sub.add_parser("monitors", help="接続中のディスプレイを一覧表示する")
+    mo.add_argument("-v", "--verbose", action="store_true", help="詳細ログ")
+
     return p
 
 
@@ -115,6 +142,7 @@ def _cli_overrides(args: argparse.Namespace) -> dict[str, Any]:
         "font_scale", "rotate_seconds", "show_credit", "show_digital_clock",
         "show_progress", "highlight_excerpt", "kiosk", "browser",
         "fake_time", "time_speed",
+        "monitor", "monitor_fallback", "window_position", "window_size",
     )
     return {k: getattr(args, k, None) for k in keys}
 
@@ -170,6 +198,12 @@ def cmd_validate(args: argparse.Namespace) -> int:
         print(f"注意         : excerpt が quote に含まれない項目 {len(no_highlight)} 件")
 
     print("\nOK: データセットは利用可能です。")
+    return 0
+
+
+def cmd_monitors(_args: argparse.Namespace) -> int:
+    """接続中のディスプレイを一覧表示する."""
+    print(list_monitors_text())
     return 0
 
 
@@ -234,6 +268,19 @@ def cmd_run(args: argparse.Namespace) -> int:
             SLOT_COUNT - filled,
         )
 
+    # ブラウザ起動前にモニタを解決しておく
+    # (--strict-monitor 時はサーバを立てる前に失敗させたい)
+    monitor = None
+    if config.kiosk:
+        try:
+            monitor = select_monitor(
+                config.get("monitor", ""),
+                fallback=bool(config.get("monitor_fallback", True)),
+            )
+        except MonitorError as exc:
+            print(f"エラー: {exc}", file=sys.stderr)
+            return 2
+
     try:
         server = ClockServer(config, dataset)
     except RuntimeError as exc:
@@ -254,7 +301,13 @@ def cmd_run(args: argparse.Namespace) -> int:
             disable_screen_blanking()
         if config.hide_cursor:
             cursor_proc = hide_cursor()
-        browser_proc = launch_kiosk(server.url, browser=config.browser)
+        browser_proc = launch_kiosk(
+            server.url,
+            browser=config.browser,
+            monitor=monitor,
+            window_position=config.get("window_position", ""),
+            window_size=config.get("window_size", ""),
+        )
         if browser_proc is None:
             log.warning("kiosk 起動に失敗しました。ブラウザで上記 URL を開いてください。")
 
@@ -301,6 +354,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return cmd_validate(args)
     if args.command == "preview":
         return cmd_preview(args)
+    if args.command == "monitors":
+        return cmd_monitors(args)
+    if getattr(args, "list_monitors", False):
+        return cmd_monitors(args)
     return cmd_run(args)
 
 
