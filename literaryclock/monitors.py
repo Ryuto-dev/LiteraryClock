@@ -23,7 +23,7 @@ import os
 import re
 import shutil
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 log = logging.getLogger("literaryclock.monitors")
@@ -52,12 +52,32 @@ class Monitor:
     primary: bool = False
     active: bool = True
     description: str = ""  # メーカー名・モデル名 (取得できた場合)
+    connector: str = ""    # /sys/class/drm 上の名前 (card1-HDMI-A-1 など)
     source: str = ""       # 検出に使った方法 (xrandr / wlr-randr / sysfs ...)
 
     @property
     def geometry(self) -> str:
         """``1920x1080+0+0`` 形式の文字列."""
         return f"{self.width}x{self.height}+{self.x}+{self.y}"
+
+    @property
+    def has_geometry(self) -> bool:
+        """解像度が判明しているか (ウィンドウサイズ指定に使えるか)."""
+        return bool(self.width and self.height)
+
+    @property
+    def drm_connector(self) -> str:
+        """``cage`` / ``kmscon`` などに渡す DRM コネクタ名.
+
+        Wayland/X11 のコネクタ名 (``HDMI-2``) を DRM 表記 (``HDMI-A-2``) に
+        正規化する。Raspberry Pi の KMS ドライバは ``HDMI-A-N`` を使う。
+        """
+        if self.connector:
+            return re.sub(r"^card\d+-", "", self.connector)
+        kind, number = _split_connector(self.name)
+        if kind == "hdmi" and number:
+            return f"HDMI-A-{number}"
+        return self.name
 
     @property
     def position_arg(self) -> str:
@@ -109,8 +129,17 @@ def _split_connector(name: str) -> tuple[str, str]:
     return match.group(1).lower(), match.group(2)
 
 
-def _run_capture(cmd: list[str], timeout: float = 5.0) -> str | None:
-    """コマンドを実行して標準出力を返す (失敗時は None)."""
+def _run_capture(
+    cmd: list[str],
+    timeout: float = 5.0,
+    env: dict[str, str] | None = None,
+) -> str | None:
+    """コマンドを実行して標準出力を返す (失敗時は None).
+
+    env を渡すと、その環境変数で実行する。SSH 経由では DISPLAY /
+    WAYLAND_DISPLAY が無いため、GUI セッションから採取した環境変数を
+    渡して ``xrandr`` / ``wlr-randr`` を動かすのに使う。
+    """
     if not shutil.which(cmd[0]):
         return None
     try:
@@ -121,6 +150,7 @@ def _run_capture(cmd: list[str], timeout: float = 5.0) -> str | None:
             stderr=subprocess.DEVNULL,
             timeout=timeout,
             text=True,
+            env=env,
         )
     except (OSError, subprocess.SubprocessError) as exc:
         log.debug("%s の実行に失敗: %s", cmd[0], exc)
@@ -302,6 +332,9 @@ def detect_sysfs(drm_dir: Path = DRM_DIR) -> list[Monitor]:
 
     レイアウト (X 座標) は分からないため、コネクタ順に左から並んでいると仮定する。
     Raspberry Pi では HDMI-A-1 = 基板の HDMI0 ポート, HDMI-A-2 = HDMI1 ポート。
+
+    SSH 経由や GUI 不在 (cage で DRM 直描画する) 場合の主要な検出経路であり、
+    ``connector`` にはカード名込みの元の名前 (``card1-HDMI-A-1``) を残しておく。
     """
     if not drm_dir.is_dir():
         return []
@@ -342,6 +375,7 @@ def detect_sysfs(drm_dir: Path = DRM_DIR) -> list[Monitor]:
                 y=0,
                 primary=(len(monitors) == 0),
                 active=True,
+                connector=card.name,
                 source="sysfs",
             )
         )
@@ -352,14 +386,22 @@ def detect_sysfs(drm_dir: Path = DRM_DIR) -> list[Monitor]:
 # --------------------------------------------------------------------------
 # 検出
 # --------------------------------------------------------------------------
-def detect_monitors(prefer: str = "") -> list[Monitor]:
+def detect_monitors(
+    prefer: str = "",
+    env: dict[str, str] | None = None,
+) -> list[Monitor]:
     """接続されているディスプレイを検出する.
 
     prefer に ``xrandr`` / ``wlr-randr`` / ``swaymsg`` / ``sysfs`` を指定すると
     その方法を最初に試す (主にテスト・デバッグ用)。
+
+    env に GUI セッションの環境変数 (``DISPLAY`` / ``WAYLAND_DISPLAY`` /
+    ``XDG_RUNTIME_DIR`` など) を渡すと、SSH 経由でもデスクトップ側の
+    ``xrandr`` / ``wlr-randr`` を実行して正確な配置を取得できる。
     """
-    wayland = bool(os.environ.get("WAYLAND_DISPLAY"))
-    x11 = bool(os.environ.get("DISPLAY"))
+    environ = dict(os.environ) if env is None else dict(env)
+    wayland = bool(environ.get("WAYLAND_DISPLAY"))
+    x11 = bool(environ.get("DISPLAY"))
 
     order: list[str] = []
     if prefer:
@@ -380,26 +422,63 @@ def detect_monitors(prefer: str = "") -> list[Monitor]:
 
         monitors: list[Monitor] = []
         if method == "xrandr" and x11:
-            out = _run_capture(["xrandr", "--query"])
+            out = _run_capture(["xrandr", "--query"], env=environ)
             monitors = parse_xrandr(out) if out else []
         elif method == "wlr-randr" and wayland:
-            out = _run_capture(["wlr-randr", "--json"])
+            out = _run_capture(["wlr-randr", "--json"], env=environ)
             monitors = parse_wlr_randr_json(out) if out else []
             if not monitors:
-                out = _run_capture(["wlr-randr"])
+                out = _run_capture(["wlr-randr"], env=environ)
                 monitors = parse_wlr_randr_text(out) if out else []
         elif method == "swaymsg" and wayland:
-            out = _run_capture(["swaymsg", "-t", "get_outputs", "-r"])
+            out = _run_capture(["swaymsg", "-t", "get_outputs", "-r"], env=environ)
             monitors = parse_swaymsg(out) if out else []
         elif method == "sysfs":
             monitors = detect_sysfs()
 
         if monitors:
             log.debug("%s で %d 台のディスプレイを検出", method, len(monitors))
-            return _mark_primary(monitors)
+            return _mark_primary(_merge_sysfs_connectors(monitors))
 
     log.debug("ディスプレイを検出できませんでした")
     return []
+
+
+def _merge_sysfs_connectors(monitors: list[Monitor]) -> list[Monitor]:
+    """xrandr/wlr-randr で得た出力に DRM コネクタ名を補完する.
+
+    ``cage`` バックエンドは DRM コネクタ名 (``HDMI-A-2``) を要求するが、
+    X11 の ``xrandr`` は ``HDMI-2`` と表記する。両者を突き合わせておく。
+    """
+    if all(m.connector for m in monitors):
+        return monitors
+    try:
+        drm = detect_sysfs()
+    except OSError:  # pragma: no cover - 権限やマウントの問題
+        return monitors
+    if not drm:
+        return monitors
+
+    by_alias: dict[str, str] = {}
+    for entry in drm:
+        for alias in entry.aliases():
+            if not alias.isdigit():
+                by_alias[alias] = entry.connector or entry.name
+
+    out: list[Monitor] = []
+    for mon in monitors:
+        if mon.connector:
+            out.append(mon)
+            continue
+        hit = ""
+        for alias in mon.aliases():
+            if alias.isdigit():
+                continue
+            if alias in by_alias:
+                hit = by_alias[alias]
+                break
+        out.append(replace(mon, connector=hit) if hit else mon)
+    return out
 
 
 def _mark_primary(monitors: list[Monitor]) -> list[Monitor]:
@@ -408,16 +487,17 @@ def _mark_primary(monitors: list[Monitor]) -> list[Monitor]:
         return monitors
     active = [m for m in monitors if m.active] or monitors
     head = min(active, key=lambda m: (m.x, m.y))
-    return [
-        Monitor(**{**vars(m), "primary": (m is head)})  # type: ignore[arg-type]
-        for m in monitors
-    ]
+    return [replace(m, primary=(m is head)) for m in monitors]
 
 
 # --------------------------------------------------------------------------
 # 選択
 # --------------------------------------------------------------------------
-def resolve(spec: str, monitors: list[Monitor] | None = None) -> Monitor | None:
+def resolve(
+    spec: str,
+    monitors: list[Monitor] | None = None,
+    env: dict[str, str] | None = None,
+) -> Monitor | None:
     """``--monitor`` の指定から 1 台を選ぶ.
 
     受け付ける書式:
@@ -435,11 +515,11 @@ def resolve(spec: str, monitors: list[Monitor] | None = None) -> Monitor | None:
         return None
 
     if monitors is None:
-        monitors = detect_monitors()
+        monitors = detect_monitors(env=env)
     if not monitors:
         raise MonitorError(
             f"ディスプレイを検出できなかったため --monitor {spec!r} を解決できません。\n"
-            "  GUI セッション上で実行しているか確認するか、\n"
+            "  literary-clock doctor で GUI セッションの検出状況を確認するか、\n"
             "  --window-position / --window-size で直接指定してください。"
         )
 
@@ -503,7 +583,7 @@ def format_table(monitors: list[Monitor]) -> str:
     if not monitors:
         return (
             "ディスプレイを検出できませんでした。\n"
-            "  GUI セッション (X11 / Wayland) 上で実行しているか確認してください。\n"
+            "  literary-clock doctor で GUI セッションの検出状況を確認してください。\n"
             "  検出できない環境では --window-position / --window-size で直接指定できます。"
         )
 

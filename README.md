@@ -22,6 +22,9 @@ Raspberry Pi での kiosk 運用を第一の目標としていますが、Python
   累積誤差の無いスロット切替タイマー。
 - **マルチモニタ対応** — Raspberry Pi の HDMI 2 口にモニタを 2 台繋いだ状態でも、
   `--monitor` で表示先を番号・コネクタ名・位置から簡単に指定できる。
+- **SSH 経由でも狙った画面に出せる** — デスクトップ側の GUI セッションを自動で
+  探して環境変数を引き継ぐほか、GUI が無くても `cage` で DRM に直接描画できる。
+  全画面化はブラウザ任せではなく WM / コンポジタ側で行うため表示先が確実。
 - **キーボードショートカット** — テーマ・組み方向・アニメーション・文字サイズなどを
   その場で調整可能 (`H` キーでヘルプ表示)。設定は端末に保存される。
 
@@ -64,6 +67,9 @@ python3 -m literaryclock preview 16:40
 
    # モニタを 2 台繋いでいて、 2 番目の HDMI に出したい場合
    bash scripts/install_pi.sh --monitor 1
+
+   # SSH のみで運用する / デスクトップを入れていない場合 (cage で DRM 直描画)
+   bash scripts/install_pi.sh --headless --monitor 1
    ```
    スクリプトが以下を行います。
    - `chromium-browser` / `fonts-noto-cjk` (日本語明朝) / `unclutter` の apt インストール
@@ -93,6 +99,7 @@ literary-clock                    全画面で時計を起動 (既定)
 literary-clock --no-kiosk         ブラウザを起動せずサーバのみ動かす
 literary-clock --monitor 1        2 番目の画面 (HDMI) に全画面表示する
 literary-clock monitors           接続中のディスプレイを一覧表示する
+literary-clock doctor             表示環境を診断する (SSH で映らない時はこれ)
 literary-clock validate <file>    データセットを検証する
 literary-clock preview 16:40      指定時刻の引用を端末に表示する
 ```
@@ -117,6 +124,10 @@ literary-clock preview 16:40      指定時刻の引用を端末に表示する
 | `--strict-monitor` | `--monitor` が見つからない時にエラー終了 | プライマリへ退避 |
 | `--window-position X,Y` | ウィンドウ位置を直接指定 | なし |
 | `--window-size W,H` | ウィンドウサイズを直接指定 | なし |
+| `--display-backend {auto,x11,sway,wlr,cage,window}` | 全画面化の方法 | `auto` |
+| `--session SPEC` | 引き継ぐ GUI セッション (`auto`/`none`/`wayland-0`/`:0`) | `auto` |
+| `--no-adopt-session` | GUI セッションの自動引き継ぎを無効化 | 引き継ぐ |
+| `--no-exclusive-output` | `wlr` で他の出力を無効化しない | 無効化する |
 
 設定の優先順位: **デフォルト → 設定ファイル → 環境変数 (`LITCLOCK_*`) → コマンドライン引数**
 
@@ -207,6 +218,130 @@ literary-clock --window-position 1920,0 --window-size 1920,1080
 > 順に best-effort で行います。Wayland で `wlr-randr` が無い場合は
 > `sudo apt install wlr-randr` で入れると正確な配置が取得できます。
 
+## SSH 経由で使う (ディスプレイ指定を確実にする)
+
+SSH でログインしたシェルには GUI の環境変数が無いため、素朴に実装すると
+「表示先を指定したのに効かない」という問題が起きます。本ソフトはこれを
+2 段構えで解決しています。
+
+1. **GUI セッションの自動引き継ぎ** — Pi 本体で動いているデスクトップを探し、
+   その環境変数 (`WAYLAND_DISPLAY` / `DISPLAY` / `XDG_RUNTIME_DIR` など) を
+   引き継いでから起動します。
+2. **全画面化をブラウザ任せにしない** — ウィンドウマネージャ / コンポジタ側で
+   出力を指定して全画面にします。GUI が無い場合は `cage` で DRM に直接描画します。
+
+そのため、SSH からでも普段通りのコマンドで狙った画面に表示できます。
+
+```bash
+ssh pi@raspberrypi.local
+cd ~/LiteraryClock
+python3 -m literaryclock --monitor 1        # そのまま 2 番目の HDMI に出る
+```
+
+### まず診断する
+
+うまく映らない場合は `doctor` を実行してください。セッション・ディスプレイ・
+不足コマンドをまとめて確認できます。
+
+```bash
+python3 -m literaryclock doctor --monitor 1
+```
+
+```
+=== 文学時計 表示環境の診断 ===
+
+実行環境      : SSH などのリモートシェル
+  DISPLAY           = (未設定)
+  WAYLAND_DISPLAY   = (未設定)
+
+--- GUI セッション ---
+検出した GUI セッション: 1 件  (上が優先)
+
+  → [0] wayland:wayland-0  user=pi  labwc  seat0  via proc
+        WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000
+
+採用するセッション: wayland:wayland-0  user=pi  labwc  seat0  via proc
+
+--- ディスプレイ ---
+検出されたディスプレイ: 2 台  (* = プライマリ)
+
+  [0]* HDMI-1       1920x1080+0+0       Dell U2415
+  [1]  HDMI-2       3840x2160+1920+0    Sony TV
+
+--- 全画面表示バックエンド ---
+選択: wlr  (wlroots: 対象以外の出力を一時的に無効化する)
+  必要なコマンドは揃っています。
+```
+
+### 全画面表示バックエンド
+
+`--display-backend` で全画面化の方法を選べます。既定の `auto` は環境から
+自動判別するので、通常は指定不要です。
+
+| バックエンド | 方式 | 必要なもの |
+|---|---|---|
+| `auto` | 環境から自動選択 (既定) | — |
+| `x11` | ウィンドウを目的モニタへ移動してから WM の全画面状態を立てる | `xdotool` |
+| `sway` | sway / i3 の IPC で「この出力で全画面」を起動前に予約する | `swaymsg` |
+| `wlr` | labwc / wayfire 向け。対象以外の出力を一時的に無効化する (終了時に復元) | `wlr-randr` |
+| `cage` | GUI セッション不要。DRM コネクタを直接指定して単独表示する | `cage` |
+| `window` | 従来動作 (ブラウザの `--kiosk` 任せ) | — |
+
+> **なぜブラウザの全画面から離れたのか**
+> Wayland ではクライアントが自分のウィンドウ位置を決められない仕様のため、
+> Chromium の `--window-position` は黙って無視されます。`--kiosk` もコンポジタが
+> 選んだ出力 (通常はプライマリ) に出てしまい、表示先を指定できません。
+> そこで「WM / コンポジタ側で出力を指定する」方式に切り替えています。
+
+### GUI を使わない構成 (最も確実)
+
+デスクトップを起動せず、`cage` で直接 HDMI に描画する方法です。SSH のみで
+運用する場合や Raspberry Pi OS Lite ではこちらが最も確実です。
+
+```bash
+sudo apt install -y cage
+python3 -m literaryclock --monitor 1 --display-backend cage
+```
+
+`cage` は「クライアント 1 つだけを全画面表示する」Wayland コンポジタで、
+DRM コネクタ (`HDMI-A-1` / `HDMI-A-2`) を直接指定できます。X11 も labwc も
+不要なので、SSH 経由でも表示先が確実に決まります。
+
+自動起動もセットアップできます。
+
+```bash
+bash scripts/install_pi.sh --headless --monitor 1
+```
+
+これは `systemd/literaryclock-cage.service` をシステムユニットとして配置します。
+デスクトップ自動ログインとは画面を取り合うため、
+`raspi-config` で **Console Autologin** に変更しておいてください。
+
+### セッションを明示的に選ぶ
+
+複数のセッションがある場合や自動判別がうまくいかない場合は指定できます。
+
+```bash
+python3 -m literaryclock --session wayland-0     # Wayland ソケット名
+python3 -m literaryclock --session :0            # X11 のディスプレイ番号
+python3 -m literaryclock --no-adopt-session      # 引き継ぎを無効化 (従来動作)
+```
+
+### `ssh -X` (X11 転送) について
+
+`ssh -X` すると `DISPLAY=localhost:10.0` が設定されますが、これは
+**接続元 PC の画面** です。そのまま使うと Pi ではなく手元の PC にブラウザが
+出てしまうため、本ソフトは X11 転送の `DISPLAY` を自動的に検出して除外し、
+Pi 本体のセッションを優先します。
+
+### SSH 経由で使う場合の注意
+
+- `wlr` バックエンドは表示中だけ他の出力を無効化します。両方の画面を同時に
+  使いたい場合は `cage` バックエンドを使うか、`--no-exclusive-output` を
+  付けてください (ただし表示先は保証されなくなります)。
+- 自動引き継ぎは自分と同じユーザーのプロセスの環境変数を読む方式のため、
+  デスクトップと SSH で同じユーザーを使ってください。
+
 ## 画面内キーボードショートカット
 
 kiosk 動作中でもキーボードが繋がっていれば、その場で見た目を調整できます (`H` で一覧表示)。
@@ -289,12 +424,14 @@ bash scripts/fetch_fonts.sh
 
 ```
 literaryclock/
-  cli.py         コマンドラインインタフェース (run / validate / preview / monitors)
+  cli.py         コマンドラインインタフェース (run / validate / preview / monitors / doctor)
   config.py      設定の読込・マージ (デフォルト → ファイル → 環境変数 → CLI)
   dataset.py     literary_clock.json の読込・検証・時刻引き当て
   server.py      静的配信 + JSON API (http.server ベース、依存なし)
   monitors.py    接続ディスプレイの検出・選択 (xrandr / wlr-randr / swaymsg / sysfs)
-  display.py     kiosk ブラウザ起動・画面消灯無効化 (X11/Wayland 両対応)
+  session.py     GUI セッションの探索と環境変数の引き継ぎ (SSH 経由対策)
+  kiosk.py       全画面表示バックエンド (x11 / sway / wlr / cage / window)
+  display.py     上記の統合・画面消灯無効化・doctor 診断
   web/
     index.html   画面構造
     css/         テーマ・レイアウト・アニメーション (CSS 変数でテーマ切替)
@@ -318,7 +455,8 @@ pytest
 ```
 
 `tests/` には設定・データセット・サーバ (実際に HTTP サーバを起動して検証)・
-マルチモニタ検出の 174 件のテストがあります。`scripts/shots.py` は Playwright で各テーマ・組み方向の
+マルチモニタ検出・GUI セッション探索・全画面表示バックエンドの 293 件の
+テストがあります。`scripts/shots.py` は Playwright で各テーマ・組み方向の
 スクリーンショットを撮る開発用ツールです。
 
 ## トラブルシューティング
@@ -335,9 +473,22 @@ pytest
 - **意図しない方のモニタに表示される** — `literary-clock monitors` で番号とコネクタ名を
   確認し、`--monitor 1` のように指定してください。自動起動の場合は
   `bash scripts/install_pi.sh --monitor 1` を再実行すれば反映されます。
-- **`monitors` でディスプレイが検出されない** — GUI セッション上 (SSH ではなく
-  デスクトップの端末) から実行してください。Wayland なら
-  `sudo apt install wlr-randr` で検出精度が上がります。
+  それでも変わらない場合は `literary-clock doctor --monitor 1` で
+  どのバックエンドが選ばれているか確認してください。
+- **SSH 経由だとディスプレイ指定が効かない** — `literary-clock doctor` を実行し、
+  「採用するセッション」が表示されているか確認してください。表示されない場合は
+  デスクトップに自動ログインしていないか、SSH とデスクトップでユーザーが
+  異なっています。GUI を使わない構成なら `cage` が最も確実です。
+  ```bash
+  sudo apt install -y cage
+  literary-clock --monitor 1 --display-backend cage
+  ```
+- **`ssh -X` すると手元の PC に表示される** — X11 転送の `DISPLAY` は自動的に
+  除外されますが、明示的に避けたい場合は `ssh` に `-X` を付けずに接続してください。
+- **`monitors` でディスプレイが検出されない** — SSH 経由でも自動でセッションを
+  引き継ぐようになっていますが、検出できない場合は `sudo apt install wlr-randr`
+  (Wayland) で検出精度が上がります。GUI が全く無い環境でも `/sys/class/drm` から
+  接続済みの HDMI を列挙できます。
 
 ## ライセンス
 

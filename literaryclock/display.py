@@ -2,6 +2,11 @@
 
 Raspberry Pi OS (Bookworm 以降は Wayland/labwc, 以前は X11) の双方を想定し、
 利用可能なコマンドのみを best-effort で実行する。失敗しても時計本体は動作する。
+
+SSH 経由での運用では、ログインシェルに GUI セッションの環境変数が無いため、
+:mod:`literaryclock.session` で本体のセッションを探して引き継いだうえで、
+:mod:`literaryclock.kiosk` のバックエンド (WM/コンポジタ側での全画面化) を
+使って表示先ディスプレイを確定させる。
 """
 
 from __future__ import annotations
@@ -10,10 +15,19 @@ import logging
 import os
 import shutil
 import subprocess
-import tempfile
 from pathlib import Path
 
+from .kiosk import (
+    BACKENDS,
+    KioskError,
+    KioskProcess,
+    backend_requirements,
+    choose_backend,
+    describe_backend,
+)
+from .kiosk import launch as _kiosk_launch
 from .monitors import Monitor, MonitorError, detect_monitors, format_table, resolve
+from .session import GuiSession, ensure_gui_session, format_sessions, is_remote_shell
 
 log = logging.getLogger("literaryclock.display")
 
@@ -28,7 +42,7 @@ BROWSER_CANDIDATES = (
     "firefox",
 )
 
-# Pi の GPU/メモリが限られるため、描画を軽くするフラグを付与する
+# 後方互換のために残している (実際のフラグ組み立ては kiosk.py 側)
 CHROMIUM_FLAGS = (
     "--kiosk",
     "--start-fullscreen",
@@ -72,7 +86,7 @@ def has_display() -> bool:
     return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
 
 
-def _run(cmd: list[str], desc: str) -> bool:
+def _run(cmd: list[str], desc: str, env: dict[str, str] | None = None) -> bool:
     """外部コマンドを best-effort で実行する."""
     if not shutil.which(cmd[0]):
         log.debug("%s: %s が無いのでスキップ", desc, cmd[0])
@@ -84,6 +98,7 @@ def _run(cmd: list[str], desc: str) -> bool:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             timeout=10,
+            env=env,
         )
         log.debug("%s: %s", desc, " ".join(cmd))
         return True
@@ -92,19 +107,34 @@ def _run(cmd: list[str], desc: str) -> bool:
         return False
 
 
-def disable_screen_blanking() -> None:
-    """スクリーンセーバ / DPMS による画面消灯を無効化する (X11)."""
-    if not os.environ.get("DISPLAY"):
-        log.debug("X11 セッションではないため画面消灯設定をスキップ")
+def disable_screen_blanking(env: dict[str, str] | None = None) -> None:
+    """スクリーンセーバ / DPMS による画面消灯を無効化する.
+
+    X11 では ``xset``、wlroots 系では ``wlr-randr`` で出力を起こす。
+    env に GUI セッションの環境変数を渡せば SSH 経由でも効く。
+    """
+    environ = dict(os.environ) if env is None else dict(env)
+    if environ.get("DISPLAY"):
+        _run(["xset", "s", "off"], "スクリーンセーバ無効化", environ)
+        _run(["xset", "s", "noblank"], "ブランク無効化", environ)
+        _run(["xset", "-dpms"], "DPMS 無効化", environ)
         return
-    _run(["xset", "s", "off"], "スクリーンセーバ無効化")
-    _run(["xset", "s", "noblank"], "ブランク無効化")
-    _run(["xset", "-dpms"], "DPMS 無効化")
+    if environ.get("WAYLAND_DISPLAY"):
+        # labwc / wayfire では画面消灯は idle デーモン側の設定になるため、
+        # ここでは出力が確実に on であることだけ担保する。
+        _run(["wlr-randr"], "出力状態の確認", environ)
+        log.debug(
+            "Wayland では画面消灯の抑止をコンポジタ側で設定してください "
+            "(例: wlopm / labwc の idle 設定)"
+        )
+        return
+    log.debug("GUI セッションが無いため画面消灯設定をスキップ")
 
 
-def hide_cursor() -> subprocess.Popen | None:
+def hide_cursor(env: dict[str, str] | None = None) -> subprocess.Popen | None:
     """マウスカーソルを隠す (unclutter を常駐させる)."""
-    if not os.environ.get("DISPLAY"):
+    environ = dict(os.environ) if env is None else dict(env)
+    if not environ.get("DISPLAY"):
         return None
     if not shutil.which("unclutter"):
         log.debug("unclutter が無いためカーソル非表示をスキップ")
@@ -114,6 +144,7 @@ def hide_cursor() -> subprocess.Popen | None:
             ["unclutter", "-idle", "0.1", "-root"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            env=environ,
         )
         log.debug("unclutter を起動しました (pid=%s)", proc.pid)
         return proc
@@ -122,9 +153,37 @@ def hide_cursor() -> subprocess.Popen | None:
         return None
 
 
+def prepare_session(
+    session_spec: str = "",
+    adopt_session: bool = True,
+) -> GuiSession | None:
+    """GUI セッションを探して環境変数を引き継ぐ.
+
+    SSH 経由でもデスクトップ側の ``DISPLAY`` / ``WAYLAND_DISPLAY`` を
+    掴めるようにするための前処理。
+    """
+    session, applied = ensure_gui_session(session_spec, enabled=adopt_session)
+    if session is None and is_remote_shell():
+        log.info(
+            "GUI セッションが見つかりませんでした。"
+            "cage バックエンド (DRM 直描画) での表示を試みます。"
+        )
+    return session
+
+
+def session_env(session: GuiSession | None) -> dict[str, str]:
+    """セッションの環境変数を現在の環境にマージした辞書を返す."""
+    env = dict(os.environ)
+    if session is not None:
+        env.update({k: v for k, v in session.env.items() if v})
+    return env
+
+
 def select_monitor(
     spec: str = "",
     fallback: bool = True,
+    env: dict[str, str] | None = None,
+    monitors: list[Monitor] | None = None,
 ) -> Monitor | None:
     """``--monitor`` の指定から表示先モニタを決める.
 
@@ -136,9 +195,10 @@ def select_monitor(
     if not spec:
         return None
 
-    monitors = detect_monitors()
+    if monitors is None:
+        monitors = detect_monitors(env=env)
     try:
-        chosen = resolve(spec, monitors)
+        chosen = resolve(spec, monitors, env=env)
     except MonitorError as exc:
         if not fallback:
             raise
@@ -159,9 +219,9 @@ def select_monitor(
     return chosen
 
 
-def list_monitors_text() -> str:
+def list_monitors_text(env: dict[str, str] | None = None) -> str:
     """検出されたディスプレイの一覧文字列を返す."""
-    return format_table(detect_monitors())
+    return format_table(detect_monitors(env=env))
 
 
 def _window_flags(
@@ -175,8 +235,12 @@ def _window_flags(
                 → --monitor で選んだモニタの座標
                 → 環境変数 LITCLOCK_WINDOW_POSITION / LITCLOCK_WINDOW_SIZE
     """
-    pos = (window_position or "").strip() or os.environ.get("LITCLOCK_WINDOW_POSITION", "").strip()
-    size = (window_size or "").strip() or os.environ.get("LITCLOCK_WINDOW_SIZE", "").strip()
+    pos = (window_position or "").strip() or os.environ.get(
+        "LITCLOCK_WINDOW_POSITION", ""
+    ).strip()
+    size = (window_size or "").strip() or os.environ.get(
+        "LITCLOCK_WINDOW_SIZE", ""
+    ).strip()
 
     if monitor is not None:
         if not (window_position or "").strip():
@@ -199,13 +263,24 @@ def launch_kiosk(
     monitor: Monitor | None = None,
     window_position: str = "",
     window_size: str = "",
-) -> subprocess.Popen | None:
-    """ブラウザを kiosk (全画面) モードで起動する.
+    session: GuiSession | None = None,
+    backend: str = "auto",
+    monitors: list[Monitor] | None = None,
+    exclusive_output: bool | None = None,
+) -> KioskProcess | None:
+    """ブラウザを全画面 (kiosk) で起動する.
 
-    monitor を指定すると、そのディスプレイの座標にウィンドウを配置して
-    全画面化する (Raspberry Pi の HDMI 2 口同時接続対応)。
+    ``backend`` で全画面化の方法を選べる:
 
-    成功時は Popen を返す。ブラウザが無い/GUI が無い場合は None。
+      - ``auto``   環境から自動選択 (既定)
+      - ``x11``    ウィンドウを移動して WM 全画面 (``_NET_WM_STATE_FULLSCREEN``)
+      - ``sway``   sway/i3 IPC で出力を指定
+      - ``wlr``    labwc/wayfire: 対象以外の出力を一時無効化
+      - ``cage``   GUI セッション不要。DRM コネクタを直接指定
+      - ``window`` 従来動作 (ブラウザの ``--kiosk``)
+
+    成功時は :class:`~literaryclock.kiosk.KioskProcess` を返す。
+    ブラウザが無い場合や決定的に失敗した場合は None。
     """
     exe = find_browser(browser)
     if not exe:
@@ -217,65 +292,63 @@ def launch_kiosk(
         )
         return None
 
-    if not has_display():
+    try:
+        chosen_backend = choose_backend(backend, session, monitor)
+    except KioskError as exc:
+        log.error("%s", exc)
+        return None
+
+    missing = backend_requirements(chosen_backend)
+    if missing:
+        log.warning(
+            "%s バックエンドには %s が必要です: sudo apt install -y %s",
+            chosen_backend, " / ".join(missing), " ".join(missing),
+        )
+
+    if chosen_backend != "cage" and (session is None or not session.usable):
         log.error(
             "GUI セッションが検出できません (DISPLAY/WAYLAND_DISPLAY が未設定)。\n"
-            "  デスクトップ環境から実行するか、--no-kiosk でサーバのみ起動してください: %s",
+            "  SSH 経由の場合は cage を入れると GUI 無しで表示できます:\n"
+            "    sudo apt install -y cage\n"
+            "    literary-clock --monitor 1 --display-backend cage\n"
+            "  サーバのみ起動する場合は --no-kiosk を使ってください: %s",
             url,
         )
         return None
 
-    name = Path(exe).name
-    cmd = [exe]
-    flags = _window_flags(monitor, window_position, window_size)
+    log.info(
+        "全画面表示バックエンド: %s (%s)",
+        chosen_backend, describe_backend(chosen_backend),
+    )
+    log.info("ブラウザを起動します: %s", Path(exe).name)
 
-    if "firefox" in name:
-        # Firefox には --window-position が無いので、ウィンドウマネージャ側で
-        # 移動させる (X11 のみ, best-effort)。
-        cmd += ["--kiosk", url]
-        if monitor is not None:
-            log.info(
-                "Firefox はモニタ指定に限定対応です。起動後に %s へ移動を試みます。",
-                monitor.name,
-            )
-    else:
-        profile = profile_dir or str(
-            Path(tempfile.gettempdir()) / "literaryclock-chromium-profile"
-        )
-        Path(profile).mkdir(parents=True, exist_ok=True)
-        cmd += list(CHROMIUM_FLAGS)
-        # Raspberry Pi OS Bookworm 以降は既定が Wayland (labwc)。
-        # DISPLAY が無く WAYLAND_DISPLAY のみの場合は明示的に ozone platform を
-        # 指定しないと、XWayland 経由の起動に失敗する/表示がぼやけることがある。
-        if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY"):
-            cmd += ["--ozone-platform=wayland", "--enable-features=UseOzonePlatform"]
-        # 複数ディスプレイ環境向けのウィンドウ配置 (X11 / Wayland 共通)
-        cmd += flags
-        cmd += [f"--user-data-dir={profile}", "--app=" + url]
-
-    log.info("ブラウザを起動します: %s", name)
-    if flags:
-        log.debug("ウィンドウ配置: %s", " ".join(flags))
     try:
-        proc = subprocess.Popen(
-            cmd,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+        result = _kiosk_launch(
+            url,
+            exe,
+            chosen_backend,
+            session=session,
+            monitor=monitor,
+            monitors=monitors or [],
+            profile_dir=profile_dir,
+            window_position=window_position,
+            window_size=window_size,
+            exclusive_output=exclusive_output,
         )
-    except OSError as exc:
-        log.error("ブラウザの起動に失敗しました: %s", exc)
+    except KioskError as exc:
+        log.error("kiosk 起動に失敗しました: %s", exc)
         return None
 
-    if monitor is not None and "firefox" in name:
-        move_window_to_monitor(monitor)
-    return proc
+    for note in result.notes:
+        log.debug("補足: %s", note)
+    return result
 
 
 def move_window_to_monitor(monitor: Monitor, title_hint: str = "") -> bool:
     """X11 上で既存ウィンドウを指定モニタへ移動する (best-effort).
 
-    Chromium は --window-position で指定できるため主に Firefox 向け。
-    wmctrl / xdotool が無ければ何もせず False を返す。
+    後方互換のために残している。通常は ``x11`` バックエンドが
+    ``xdotool`` を用いて移動と全画面化をまとめて行う。
     """
     if not os.environ.get("DISPLAY"):
         log.debug("X11 ではないためウィンドウ移動をスキップ")
@@ -283,3 +356,118 @@ def move_window_to_monitor(monitor: Monitor, title_hint: str = "") -> bool:
     geom = f"0,{monitor.x},{monitor.y},{monitor.width or -1},{monitor.height or -1}"
     pattern = title_hint or ":ACTIVE:"
     return _run(["wmctrl", "-r", pattern, "-e", geom], "ウィンドウをモニタへ移動")
+
+
+def doctor_text(
+    session_spec: str = "",
+    monitor_spec: str = "",
+    backend_spec: str = "auto",
+) -> str:
+    """``literary-clock doctor`` 用の診断レポートを組み立てる.
+
+    SSH 経由で表示できない原因を切り分けられるよう、
+    セッション・ディスプレイ・必要コマンドの状況をまとめて出す。
+    """
+    lines: list[str] = ["=== 文学時計 表示環境の診断 ===", ""]
+
+    remote = is_remote_shell()
+    lines.append(f"実行環境      : {'SSH などのリモートシェル' if remote else 'ローカル端末'}")
+    for key in ("DISPLAY", "WAYLAND_DISPLAY", "XDG_RUNTIME_DIR", "XDG_SESSION_TYPE"):
+        lines.append(f"  {key:<18}= {os.environ.get(key, '(未設定)')}")
+    lines.append("")
+
+    # --- GUI セッション ---
+    lines.append("--- GUI セッション ---")
+    lines.append(format_sessions())
+    lines.append("")
+
+    session = prepare_session(session_spec, adopt_session=True)
+    if session is not None and session.usable:
+        lines.append(f"採用するセッション: {session.label()}")
+        lines.append(f"  {session.env_summary()}")
+    else:
+        lines.append("採用するセッション: なし (GUI セッションを掴めませんでした)")
+        lines.append("  → cage をインストールすると GUI 無しでも表示できます:")
+        lines.append("     sudo apt install -y cage")
+    lines.append("")
+
+    # --- ディスプレイ ---
+    env = session_env(session)
+    monitors = detect_monitors(env=env)
+    lines.append("--- ディスプレイ ---")
+    lines.append(format_table(monitors))
+    lines.append("")
+
+    monitor = None
+    if monitor_spec:
+        try:
+            monitor = resolve(monitor_spec, monitors, env=env)
+        except MonitorError as exc:
+            lines.append(f"--monitor {monitor_spec!r} の解決に失敗:\n{exc}")
+        if monitor is not None:
+            lines.append(
+                f"--monitor {monitor_spec!r} → [{monitor.index}] {monitor.name} "
+                f"({monitor.geometry})  DRM: {monitor.drm_connector}"
+            )
+            lines.append("")
+
+    # --- バックエンド ---
+    lines.append("--- 全画面表示バックエンド ---")
+    try:
+        backend = choose_backend(backend_spec, session, monitor)
+    except KioskError as exc:
+        lines.append(str(exc))
+        backend = "window"
+    lines.append(f"選択: {backend}  ({describe_backend(backend)})")
+    missing = backend_requirements(backend)
+    if missing:
+        lines.append(f"  不足コマンド: {' '.join(missing)}")
+        lines.append(f"  → sudo apt install -y {' '.join(missing)}")
+    else:
+        lines.append("  必要なコマンドは揃っています。")
+    lines.append("")
+
+    lines.append("--- 関連コマンドの有無 ---")
+    for name in ("chromium-browser", "chromium", "cage", "wlr-randr", "swaymsg",
+                 "xdotool", "wmctrl", "xrandr", "unclutter"):
+        mark = "○" if shutil.which(name) else "×"
+        lines.append(f"  {mark} {name}")
+    lines.append("")
+
+    if monitor is None and monitor_spec:
+        lines.append("ヒント: 表示先が解決できていません。")
+        lines.append("  literary-clock monitors で番号とコネクタ名を確認してください。")
+    elif backend == "window" and monitor is not None:
+        lines.append(
+            "ヒント: window バックエンドでは Wayland 上で表示先が保証されません。"
+        )
+        lines.append("  --display-backend cage または wlr の利用を検討してください。")
+    else:
+        lines.append("この設定で起動する:")
+        cmd = "literary-clock"
+        if monitor_spec:
+            cmd += f" --monitor {monitor_spec}"
+        if backend_spec != "auto":
+            cmd += f" --display-backend {backend_spec}"
+        lines.append(f"  {cmd}")
+
+    return "\n".join(lines)
+
+
+__all__ = [
+    "BACKENDS",
+    "BROWSER_CANDIDATES",
+    "CHROMIUM_FLAGS",
+    "KioskProcess",
+    "disable_screen_blanking",
+    "doctor_text",
+    "find_browser",
+    "has_display",
+    "hide_cursor",
+    "launch_kiosk",
+    "list_monitors_text",
+    "move_window_to_monitor",
+    "prepare_session",
+    "select_monitor",
+    "session_env",
+]
