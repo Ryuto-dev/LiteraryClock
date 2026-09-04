@@ -11,6 +11,8 @@ from literaryclock.display import _window_flags, select_monitor
 from literaryclock.monitors import (
     Monitor,
     MonitorError,
+    _mark_primary,
+    detect_monitors,
     detect_sysfs,
     format_table,
     parse_swaymsg,
@@ -349,21 +351,21 @@ def test_select_monitor_empty_spec():
 
 
 def test_select_monitor_fallback(monkeypatch, caplog):
-    monkeypatch.setattr("literaryclock.display.detect_monitors", lambda: [])
+    monkeypatch.setattr("literaryclock.display.detect_monitors", lambda **kw: [])
     with caplog.at_level("WARNING"):
         assert select_monitor("1", fallback=True) is None
     assert "プライマリ" in caplog.text
 
 
 def test_select_monitor_strict_raises(monkeypatch):
-    monkeypatch.setattr("literaryclock.display.detect_monitors", lambda: [])
+    monkeypatch.setattr("literaryclock.display.detect_monitors", lambda **kw: [])
     with pytest.raises(MonitorError):
         select_monitor("1", fallback=False)
 
 
 def test_select_monitor_success(monkeypatch):
     mons = parse_xrandr(XRANDR_OUTPUT)
-    monkeypatch.setattr("literaryclock.display.detect_monitors", lambda: mons)
+    monkeypatch.setattr("literaryclock.display.detect_monitors", lambda **kw: mons)
     chosen = select_monitor("HDMI-2")
     assert chosen is not None and chosen.name == "HDMI-2"
 
@@ -418,3 +420,153 @@ def test_config_window_size_rejects_negative():
 
 def test_config_window_size_valid():
     assert build_config({"window_size": "1920,1080"}).window_size == "1920,1080"
+
+
+# --------------------------------------------------------------------------
+# DRM コネクタ名 (cage バックエンドが必要とする)
+# --------------------------------------------------------------------------
+def test_drm_connector_from_sysfs(tmp_path):
+    d = tmp_path / "card1-HDMI-A-2"
+    d.mkdir()
+    (d / "status").write_text("connected", encoding="utf-8")
+    (d / "modes").write_text("1920x1080\n", encoding="utf-8")
+    mon = detect_sysfs(tmp_path)[0]
+    assert mon.connector == "card1-HDMI-A-2"
+    # card 接頭辞は落として DRM コネクタ名にする
+    assert mon.drm_connector == "HDMI-A-2"
+
+
+def test_drm_connector_normalizes_xrandr_name(two_monitors):
+    """X11 の HDMI-2 を DRM 表記の HDMI-A-2 に変換する."""
+    assert two_monitors[1].name == "HDMI-2"
+    assert two_monitors[1].drm_connector == "HDMI-A-2"
+
+
+def test_drm_connector_passthrough_for_unknown_kind():
+    assert Monitor(index=0, name="DSI-1").drm_connector == "DSI-1"
+
+
+def test_has_geometry():
+    assert Monitor(index=0, name="HDMI-1", width=1920, height=1080).has_geometry
+    assert not Monitor(index=0, name="HDMI-1").has_geometry
+
+
+# --------------------------------------------------------------------------
+# 環境変数を渡した検出 (SSH 経由対応)
+# --------------------------------------------------------------------------
+def test_detect_monitors_uses_supplied_env(monkeypatch):
+    """SSH 経由でも env を渡せば xrandr が実行される."""
+    seen = {}
+
+    def fake_capture(cmd, timeout=5.0, env=None):
+        seen["cmd"] = cmd
+        seen["env"] = env
+        return XRANDR_OUTPUT if cmd[0] == "xrandr" else None
+
+    monkeypatch.setattr("literaryclock.monitors._run_capture", fake_capture)
+    # プロセス自身の環境に DISPLAY は無い
+    monkeypatch.delenv("DISPLAY", raising=False)
+    monkeypatch.delenv("WAYLAND_DISPLAY", raising=False)
+
+    mons = detect_monitors(env={"DISPLAY": ":0"})
+    assert [m.name for m in mons] == ["HDMI-1", "HDMI-2"]
+    assert seen["cmd"][0] == "xrandr"
+    assert seen["env"]["DISPLAY"] == ":0"
+
+
+def test_detect_monitors_wayland_env_prefers_wlr_randr(monkeypatch):
+    called = []
+
+    def fake_capture(cmd, timeout=5.0, env=None):
+        called.append(cmd[0])
+        return WLR_JSON if cmd[0] == "wlr-randr" else None
+
+    monkeypatch.setattr("literaryclock.monitors._run_capture", fake_capture)
+    mons = detect_monitors(env={"WAYLAND_DISPLAY": "wayland-0"})
+    assert called[0] == "wlr-randr"
+    assert [m.name for m in mons] == ["HDMI-A-1", "HDMI-A-2"]
+
+
+def test_detect_monitors_falls_back_to_sysfs(monkeypatch, tmp_path):
+    """GUI ツールが使えない場合でも sysfs から検出できる."""
+    d = tmp_path / "card1-HDMI-A-1"
+    d.mkdir()
+    (d / "status").write_text("connected", encoding="utf-8")
+    (d / "modes").write_text("1920x1080\n", encoding="utf-8")
+
+    monkeypatch.setattr(
+        "literaryclock.monitors._run_capture", lambda *a, **k: None
+    )
+    monkeypatch.setattr("literaryclock.monitors.DRM_DIR", tmp_path)
+    monkeypatch.setattr(
+        "literaryclock.monitors.detect_sysfs", lambda drm_dir=tmp_path: [
+            Monitor(index=0, name="HDMI-A-1", width=1920, height=1080,
+                    connector="card1-HDMI-A-1", source="sysfs")
+        ]
+    )
+    mons = detect_monitors(env={})
+    assert [m.name for m in mons] == ["HDMI-A-1"]
+
+
+def test_resolve_accepts_env(monkeypatch):
+    monkeypatch.setattr(
+        "literaryclock.monitors.detect_monitors",
+        lambda prefer="", env=None: parse_xrandr(XRANDR_OUTPUT),
+    )
+    assert resolve("1", env={"DISPLAY": ":0"}).name == "HDMI-2"
+
+
+def test_mark_primary_preserves_connector():
+    """primary 付与時に connector が失われないこと (dataclasses.replace)."""
+    mons = _mark_primary([
+        Monitor(index=0, name="HDMI-A-1", x=0, connector="card1-HDMI-A-1"),
+        Monitor(index=1, name="HDMI-A-2", x=1920, connector="card1-HDMI-A-2"),
+    ])
+    assert mons[0].primary is True
+    assert mons[0].connector == "card1-HDMI-A-1"
+    assert mons[1].connector == "card1-HDMI-A-2"
+
+
+# --------------------------------------------------------------------------
+# display_backend 設定
+# --------------------------------------------------------------------------
+def test_config_display_backend_default():
+    assert build_config().display_backend == "auto"
+
+
+@pytest.mark.parametrize(
+    "backend", ["auto", "x11", "sway", "wlr", "cage", "window"]
+)
+def test_config_display_backend_valid(backend):
+    assert build_config({"display_backend": backend}).display_backend == backend
+
+
+def test_config_display_backend_normalizes_case():
+    assert build_config({"display_backend": "CAGE"}).display_backend == "cage"
+
+
+def test_config_display_backend_invalid():
+    with pytest.raises(ConfigError):
+        build_config({"display_backend": "teleport"})
+
+
+def test_config_display_backend_from_env(monkeypatch):
+    monkeypatch.setenv("LITCLOCK_DISPLAY_BACKEND", "cage")
+    assert build_config().display_backend == "cage"
+
+
+def test_config_session_defaults():
+    cfg = build_config()
+    assert cfg.session == ""
+    assert cfg.adopt_session is True
+    assert cfg.exclusive_output is True
+
+
+def test_config_session_from_env(monkeypatch):
+    monkeypatch.setenv("LITCLOCK_SESSION", "wayland-0")
+    monkeypatch.setenv("LITCLOCK_ADOPT_SESSION", "false")
+    monkeypatch.setenv("LITCLOCK_EXCLUSIVE_OUTPUT", "no")
+    cfg = build_config()
+    assert cfg.session == "wayland-0"
+    assert cfg.adopt_session is False
+    assert cfg.exclusive_output is False

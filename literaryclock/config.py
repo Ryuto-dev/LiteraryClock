@@ -25,6 +25,8 @@ CONFIG_SEARCH_PATHS = (
 THEMES = ("ink", "washi", "night", "sepia", "mono")
 WRITING_MODES = ("horizontal", "vertical", "auto")
 TRANSITIONS = ("fade", "typewriter", "blur", "slide", "none")
+# 全画面化の方法 (詳細は literaryclock/kiosk.py)
+DISPLAY_BACKENDS = ("auto", "x11", "sway", "wlr", "cage", "window")
 
 DEFAULTS: dict[str, Any] = {
     # --- データ ---
@@ -63,6 +65,20 @@ DEFAULTS: dict[str, Any] = {
     # ウィンドウ位置・サイズの直接指定 ("X,Y" / "W,H")。--monitor より優先。
     "window_position": "",
     "window_size": "",
+    # 全画面化の方法。auto は環境から自動選択する。
+    #   x11    : ウィンドウを移動して WM の全画面状態を立てる
+    #   sway   : sway/i3 の IPC で出力を指定
+    #   wlr    : labwc/wayfire で対象以外の出力を一時的に無効化
+    #   cage   : GUI セッション不要。DRM コネクタを直接指定 (SSH 経由向け)
+    #   window : 従来動作 (ブラウザの --kiosk 任せ)
+    "display_backend": "auto",
+    # SSH 経由でもデスクトップ側の GUI セッションを探して環境変数を引き継ぐ
+    "adopt_session": True,
+    # 引き継ぐセッションの指定 (""/auto=自動, "none"=引き継がない,
+    # "wayland-0" / ":0" / "wayland" / "x11")
+    "session": "",
+    # wlr バックエンドで対象以外の出力を一時的に無効化する
+    "exclusive_output": True,
     # マウスカーソルを隠す (unclutter があれば使用)
     "hide_cursor": True,
     # 画面のスクリーンセーバ/DPMS を無効化する
@@ -83,6 +99,8 @@ _BOOL_KEYS = {
     "hide_cursor",
     "disable_blanking",
     "monitor_fallback",
+    "adopt_session",
+    "exclusive_output",
 }
 _INT_KEYS = {"port", "rotate_seconds"}
 _FLOAT_KEYS = {"font_scale", "time_speed"}
@@ -194,6 +212,13 @@ def _validate(values: dict[str, Any]) -> None:
     # ウィンドウ位置は負の座標 (プライマリの左側にあるモニタ) もあり得る
     _validate_pair("window_position", values.get("window_position"), allow_negative=True)
     _validate_pair("window_size", values.get("window_size"), allow_negative=False)
+    backend = str(values.get("display_backend") or "auto").strip().lower()
+    if backend not in DISPLAY_BACKENDS:
+        raise ConfigError(
+            f"display_backend は {DISPLAY_BACKENDS} のいずれかです: "
+            f"{values.get('display_backend')!r}"
+        )
+    values["display_backend"] = backend
 
 
 def load_config_file(path: Path | None = None) -> dict[str, Any]:

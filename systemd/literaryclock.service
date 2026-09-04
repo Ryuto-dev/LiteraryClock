@@ -8,6 +8,11 @@
 #   Raspberry Pi OS Bookworm 以降 (labwc/wayfire) は autologin 時に
 #   graphical-session.target を自動で起動するため、この方式と噛み合う。
 #
+#   なお本ソフトは GUI セッションの環境変数を自力で探して引き継ぐため
+#   (literaryclock/session.py)、systemd や SSH から起動しても
+#   デスクトップ側の画面を掴める。GUI が全く無い構成で使いたい場合は
+#   literaryclock-cage.service (DRM 直描画) を参照。
+#
 # インストール方法 (推奨: scripts/install_pi.sh が自動で行う):
 #   mkdir -p ~/.config/systemd/user
 #   cp systemd/literaryclock.service ~/.config/systemd/user/
@@ -22,24 +27,32 @@
 #   journalctl --user -u literaryclock -f
 #
 # 表示するモニタを変えたい (HDMI が 2 口あり 2 台繋いでいる場合):
-#   まず接続されている画面を確認する:
+#   まず接続されている画面を確認する (SSH からでも可):
 #     python3 -m literaryclock monitors
 #   出力例:
 #     [0]* HDMI-1   1920x1080+0+0
 #     [1]  HDMI-2   1920x1080+1920+0
-#   下の ExecStart に --monitor を足す (番号でもコネクタ名でも可):
-#     ExecStart=/usr/bin/python3 -m literaryclock --theme ink --monitor 1
-#     ExecStart=/usr/bin/python3 -m literaryclock --theme ink --monitor HDMI-2
-#   あるいはユニットを編集せず Environment= で指定してもよい:
+#   下の Environment= で指定するのが簡単:
 #     Environment=LITCLOCK_MONITOR=1
+#   ExecStart に直接書いてもよい:
+#     ExecStart=/usr/bin/python3 -m literaryclock --theme ink --monitor HDMI-2
 #   変更後は反映が必要:
 #     systemctl --user daemon-reload
 #     systemctl --user restart literaryclock.service
 #
+# 表示先が意図した画面にならない場合:
+#   まず診断する (SSH からでも可):
+#     python3 -m literaryclock doctor --monitor 1
+#   Wayland (labwc/wayfire) はクライアントがウィンドウ位置を決められないため、
+#   既定では「表示先以外の出力を一時的に無効化する」方式 (wlr) で表示先を
+#   確定させる。他の画面も併用したい場合は cage 方式を検討すること:
+#     Environment=LITCLOCK_DISPLAY_BACKEND=cage
+#
 # 備考:
 #  - ExecStart のパスは install_pi.sh が実行時に自動で書き換える。
 #    手動で配置する場合は %h (ホームディレクトリ) を使ったパスに直すこと。
-#  - install_pi.sh に --monitor を渡すと、下の Environment= 行に反映される。
+#  - install_pi.sh に --monitor / --display-backend を渡すと、
+#    下の Environment= 行に反映される。
 
 [Unit]
 Description=LiteraryClock - 文学時計 (青空文庫コーパスによる全画面時計)
@@ -53,6 +66,8 @@ WorkingDirectory=%h/LiteraryClock
 # 表示先モニタ (空 = OS 任せ / 通常はプライマリ)。
 # 例: LITCLOCK_MONITOR=1 や LITCLOCK_MONITOR=HDMI-2
 Environment=LITCLOCK_MONITOR=
+# 全画面化の方法 (空 = auto)。auto / x11 / sway / wlr / cage / window
+Environment=LITCLOCK_DISPLAY_BACKEND=
 ExecStart=/usr/bin/python3 -m literaryclock --theme ink
 Restart=on-failure
 RestartSec=5

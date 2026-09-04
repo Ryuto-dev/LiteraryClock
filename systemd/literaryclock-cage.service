@@ -1,0 +1,88 @@
+# 文学時計 (LiteraryClock) — GUI セッション不要の自動起動ユニット (cage / DRM 直描画)
+#
+# こちらを使うべきケース:
+#   - SSH からしか操作しない (デスクトップに自動ログインしていない)
+#   - デスクトップ環境を入れたくない / Raspberry Pi OS Lite を使っている
+#   - 「必ずこの HDMI ポートに出す」ことを確実に保証したい
+#
+# 仕組み:
+#   cage は「クライアント 1 つだけを全画面表示する」Wayland コンポジタ。
+#   DRM (カーネルのモード設定) に直接描画するため、X11 も labwc も不要。
+#   wlroots の WLR_OUTPUTS でコネクタ (HDMI-A-1 / HDMI-A-2) を指定できるので、
+#   SSH 経由でも狙ったディスプレイに確実に全画面表示できる。
+#   これが本ユニットが「SSH 経由での本命」である理由。
+#
+# 事前準備:
+#   sudo apt install -y cage chromium-browser fonts-noto-cjk
+#
+#   デスクトップ自動ログインを使っている場合は競合するため、
+#   コンソール起動 (GUI 無し) に切り替えておく:
+#     sudo raspi-config → System Options → Boot / Auto Login → Console Autologin
+#
+# インストール (システムユニットとして):
+#   sudo cp systemd/literaryclock-cage.service /etc/systemd/system/
+#   sudo sed -i "s/%%USER%%/$USER/g" /etc/systemd/system/literaryclock-cage.service
+#   sudo sed -i "s#%%REPO%%#$HOME/LiteraryClock#g" /etc/systemd/system/literaryclock-cage.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now literaryclock-cage.service
+#
+#   scripts/install_pi.sh --headless --monitor 1 でも同じことができる。
+#
+# 表示先ディスプレイの指定:
+#   接続されている画面を確認する (GUI 不要):
+#     python3 -m literaryclock monitors
+#   下の Environment=LITCLOCK_MONITOR= に番号かコネクタ名を入れる:
+#     Environment=LITCLOCK_MONITOR=1
+#     Environment=LITCLOCK_MONITOR=HDMI-A-2
+#   反映:
+#     sudo systemctl daemon-reload
+#     sudo systemctl restart literaryclock-cage.service
+#
+# ログの確認:
+#   journalctl -u literaryclock-cage -f
+#
+# うまく映らない場合:
+#   python3 -m literaryclock doctor --monitor 1 --display-backend cage
+
+[Unit]
+Description=LiteraryClock - 文学時計 (cage による DRM 直描画・GUI セッション不要)
+After=systemd-user-sessions.service plymouth-quit-wait.service
+After=network-online.target
+Wants=network-online.target
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+User=%%USER%%
+WorkingDirectory=%%REPO%%
+
+# DRM / 入力デバイスへのアクセスに必要なグループ
+SupplementaryGroups=video render input tty seat
+
+# cage を動かすための最低限の環境
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=WLR_BACKENDS=drm,libinput
+
+# 表示先ディスプレイ (空 = 最初に見つかった出力)。
+# 番号 (0/1) でもコネクタ名 (HDMI-A-2) でも可。
+Environment=LITCLOCK_MONITOR=
+# GUI セッションを探さず、cage で直接描画する
+Environment=LITCLOCK_DISPLAY_BACKEND=cage
+
+# tty1 を掴んで画面を占有する
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+StandardInput=tty-fail
+StandardOutput=journal
+StandardError=journal
+
+ExecStart=/usr/bin/python3 -m literaryclock --theme ink
+
+Restart=always
+RestartSec=5
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target
